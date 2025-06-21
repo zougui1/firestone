@@ -1,0 +1,9 @@
+{
+  "extends": "@zougui/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2024"],
+    "outDir": "${configDir}/dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

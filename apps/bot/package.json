@@ -1,0 +1,49 @@
+{
+  "name": "@zougui/firestone.bot",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsup src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "start": "pnpm with-env node dist",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env -e .env --"
+  },
+  "dependencies": {
+    "@xstate/store": "^3.2.0",
+    "@zougui/firestone.db": "workspace:^",
+    "axios": "^1.8.1",
+    "big.js": "^6.2.2",
+    "commander": "^13.1.0",
+    "effect": "^3.14.2",
+    "emittery": "^0.13.1",
+    "env-var": "^7.5.0",
+    "execa": "^9.5.2",
+    "fast-levenshtein": "^3.0.0",
+    "immer": "^10.1.1",
+    "nanoid": "^2.1.11",
+    "node-moving-things-tracker": "^0.9.1",
+    "radash": "^12.1.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "tsup": "^8.5.0",
+    "ws": "^8.18.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "@types/ws": "^8.18.1",
+    "@zougui/eslint-config": "workspace:*",
+    "@zougui/prettier-config": "workspace:*",
+    "@zougui/tsconfig": "workspace:*",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "catalog:",
+    "jiti": "^2.4.2",
+    "typescript": "catalog:"
+  },
+  "prettier": "@zougui/prettier-config"
+}
