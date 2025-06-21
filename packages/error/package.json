@@ -1,13 +1,10 @@
 {
-  "name": "@zougui/api",
-  "version": "0.1.0",
+  "name": "@zougui/firestone.error",
   "private": true,
+  "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    }
+    ".": "./src/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -17,12 +14,6 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
-  },
-  "dependencies": {
-    "@trpc/server": "catalog:",
-    "@zougui/firestone.db": "workspace:*",
-    "superjson": "2.2.2",
-    "zod": "catalog:"
   },
   "devDependencies": {
     "@zougui/eslint-config": "workspace:*",

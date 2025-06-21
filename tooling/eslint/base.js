@@ -15,6 +15,7 @@ export const restrictEnvAccess = tseslint.config(
   {
     files: ['**/*.js', '**/*.ts', '**/*.tsx'],
     rules: {
+      'import/consistent-type-specifier-style': 'off',
       'no-restricted-properties': [
         'error',
         {

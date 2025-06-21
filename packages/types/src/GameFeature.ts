@@ -3,6 +3,7 @@ export type GameFeature = (
   | 'mapMission'
   | 'oracleRitual'
   | 'engineerTools'
+  | 'campaignMission'
   | 'alchemyExperiment'
   | 'guardianTraining'
   | 'guildExpedition'

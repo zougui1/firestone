@@ -6,7 +6,7 @@ import { papr } from '../client';
 
 const guardians: Guardian[] = ['Vermillion', 'Grace', 'Ankaa', 'Azhar'];
 
-export const ConfigModel = papr.model('configs', schema({
+export const config = papr.model('configs', schema({
   sessionId: types.string({ required: true }),
   gameVersion: types.string({ required: true }),
   disabled: types.boolean(),
@@ -16,6 +16,10 @@ export const ConfigModel = papr.model('configs', schema({
     }, { required: true }),
     campaignLoot: types.object({
       enabled: types.boolean({ required: true }),
+    }, { required: true }),
+    campaignMission: types.object({
+      enabled: types.boolean({ required: true }),
+      battleCooldownSeconds: types.number({ required: true }),
     }, { required: true }),
     guardianTraining: types.object({
       enabled: types.boolean({ required: true }),

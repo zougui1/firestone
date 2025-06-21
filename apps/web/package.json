@@ -23,7 +23,6 @@
     "@zougui/api": "workspace:*",
     "@zougui/firestone.db": "workspace:*",
     "@zougui/ui": "workspace:*",
-    "@zougui/validators": "workspace:*",
     "next": "^15.3.3",
     "postcss": "^8.5.4",
     "react": "catalog:react19",

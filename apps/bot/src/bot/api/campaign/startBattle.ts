@@ -18,14 +18,16 @@ const dataSchema = z.tuple([
   })),
   z.string(),
   z.boolean(),
-]);
+]).transform(([, , { battleLogEntries }]) => {
+  const lastEntry = battleLogEntries.at(-1);
 
-const global = { mission: 0, difficulty: 0 };
+  return {
+    battleLogEntries,
+    hasWon: !!lastEntry && lastEntry.A !== 0,
+  };
+});
 
 export const startBattle = ({ mission, difficulty }: StartBattleOptions) => {
-  global.mission = mission;
-  global.difficulty = difficulty;
-
   return request({
     type: 'StartCampaignBattle',
     parameters: [mission, difficulty],

@@ -10,6 +10,10 @@ export const defaultConfig: database.config.ConfigType = {
     campaignLoot: {
       enabled: true,
     },
+    campaignMission: {
+      enabled: true,
+      battleCooldownSeconds: 5,
+    },
     guardianTraining: {
       enabled: true,
       guardian: 'Vermillion',

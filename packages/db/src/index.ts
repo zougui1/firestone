@@ -1,10 +1,8 @@
 import { client, papr } from './client';
-import { ConfigModel, FirestoneLibraryModel } from './models';
+import * as models from './models';
 
 export const db = {
+  ...models,
   client,
   papr,
-
-  config: ConfigModel,
-  firestoneLibrary: FirestoneLibraryModel,
 };

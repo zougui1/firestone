@@ -1,9 +1,11 @@
 import { Effect, Queue } from 'effect';
 
+import type { GameFeature } from '@zougui/firestone.types';
+
 import { event, game } from './store';
 import { handleMapMissions, mapStore } from './features/map';
 import { handleTrainGuardian } from './features/guardians';
-import { handleCampaignLoot } from './features/campaign';
+import { handleCampaignLoot, handleCampaignMission } from './features/campaign';
 import { handleEngineerTools } from './features/engineer';
 import { handlePickaxeSupplies } from './features/arcane-crystal';
 import { handleExperiments } from './features/alchemist';
@@ -25,7 +27,8 @@ const gameHandlers = {
   pickaxesClaiming: handlePickaxeSupplies,
   alchemyExperiment: handleExperiments,
   mapMission: handleMapMissions,
-} satisfies Record<event.ActionType, () => Effect.Effect<unknown, unknown, unknown>>;
+  campaignMission: handleCampaignMission,
+} satisfies Record<GameFeature, () => Effect.Effect<unknown, unknown, unknown>>;
 
 const init = () => {
   return Effect.gen(function* () {
@@ -60,10 +63,21 @@ const init = () => {
   });
 }
 
-const executeAction = (type: event.ActionType) => {
+const executeAction = (type: GameFeature) => {
   return Effect.gen(function* () {
     if (type in gameHandlers && type) {
-      yield* gameHandlers[type]().pipe(Effect.catchAll(Effect.logError));
+      yield* gameHandlers[type]().pipe(
+        Effect.catchAll(error => Effect.gen(function* () {
+          const eventQueue = yield* EventQueue;
+
+          yield* eventQueue.add({
+            type,
+            timeoutMs: env.firestone.blindTimeoutSeconds * 1000,
+          });
+
+          yield* Effect.logError(error);
+        })),
+      );
     } else {
       yield* Effect.logWarning(`feature "${type}" has no handler`);
     }
@@ -76,7 +90,7 @@ const handleGameFeatures = () => {
     const features = Object
       .entries(config.features)
       .filter(([, feature]) => feature.enabled)
-      .map(([name]) => name) as event.ActionType[];
+      .map(([name]) => name) as GameFeature[];
 
     yield* Effect.logDebug('Enabled game features:', features.join(', '));
 
@@ -105,9 +119,10 @@ export const startBot = () => {
   return Effect.gen(function* () {
     yield* Effect.log('Starting bot');
 
-    const queueMap: Record<event.ActionType, Queue.Queue<Event>> = {
+    const queueMap: Record<GameFeature, Queue.Queue<Event>> = {
       alchemyExperiment: yield* Queue.unbounded<Event>(),
       campaignLoot: yield* Queue.unbounded<Event>(),
+      campaignMission: yield* Queue.unbounded<Event>(),
       engineerTools: yield* Queue.unbounded<Event>(),
       firestoneResearch: yield* Queue.unbounded<Event>(),
       guardianTraining: yield* Queue.unbounded<Event>(),

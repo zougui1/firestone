@@ -27,10 +27,9 @@
     "immer": "^10.1.1",
     "nanoid": "^2.1.11",
     "node-moving-things-tracker": "^0.9.1",
-    "radash": "^12.1.0",
+    "radash": "^12.1.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "tsup": "^8.5.0",
     "ws": "^8.18.1",
     "zod": "^3.24.2"
   },
@@ -38,11 +37,13 @@
     "@types/node": "^22.15.29",
     "@types/ws": "^8.18.1",
     "@zougui/eslint-config": "workspace:*",
+    "@zougui/firestone.types": "workspace:^",
     "@zougui/prettier-config": "workspace:*",
     "@zougui/tsconfig": "workspace:*",
     "dotenv-cli": "^8.0.0",
     "eslint": "catalog:",
     "jiti": "^2.4.2",
+    "tsup": "^8.5.0",
     "typescript": "catalog:"
   },
   "prettier": "@zougui/prettier-config"
