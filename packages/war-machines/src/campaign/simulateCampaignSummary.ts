@@ -1,7 +1,7 @@
 import type { CampaignDifficulty } from '@zougui/firestone.types';
 
-import { getEnemySquad } from './getEnemySquad';
-import { getRequiredPower } from './getRequiredPower';
+import { getEnemySquad } from './utils/getEnemySquad';
+import { getRequiredPower } from './utils/getRequiredPower';
 import { simulateCampaignBattle } from './simulateCampaignBattle';
 import { maxCampaignMissions } from './data';
 import type { Mission, Squad } from './types';

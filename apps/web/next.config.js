@@ -11,8 +11,7 @@ const config = {
   transpilePackages: [
     '@zougui/api',
     '@zougui/firestone.db',
-    '@zougui/ui',
-    '@zougui/validators',
+    '~/components/ui',
   ],
 
   /** We already do linting and typechecking as separate tasks in CI */

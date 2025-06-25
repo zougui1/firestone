@@ -3,7 +3,6 @@
 import { randomInt } from './utils';
 import { getDamageDealt } from './getDamageDealt';
 import { healWarMachine } from './healWarMachine';
-import type { WarMachineName } from './data';
 import type { SimulationWarMachine } from './types';
 
 const getRandomTargets = (warMachines: SimulationWarMachine[], targetCount: number) => {
@@ -107,7 +106,7 @@ export const applyAbility = (attacker: SimulationWarMachine, target: SimulationW
         healWarMachine(lowestHealthWarMachine, attacker.damage * 3);
       }
     },
-  } satisfies Record<WarMachineName, () => (number | void)>;
+  };
   // handlers give an error when trying to access it with `attacker.name`
   // despite checking if the property exists
   const abilities = handlers as Record<string, () => (number | void)>;

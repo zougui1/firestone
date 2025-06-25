@@ -1,0 +1,37 @@
+{
+  "name": "@zougui/firestone.war-machines-embed",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@xstate/store": "catalog:",
+    "@zougui/firestone.war-machines": "workspace:^",
+    "postcss": "^8.5.4",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "^4.5.2",
+    "@zougui/eslint-config": "workspace:*",
+    "@zougui/firestone.types": "workspace:^",
+    "@zougui/prettier-config": "workspace:*",
+    "@zougui/tailwind-config": "workspace:*",
+    "globals": "^16.2.0",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^7.0.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "prettier": "@zougui/prettier-config"
+}

@@ -11,7 +11,9 @@ export const env = createEnv({
    * Specify your server-side environment variables schema here.
    * This way you can ensure the app isn't built with invalid env vars.
    */
-  server: {},
+  server: {
+    WAR_MACHINES_APP_PORT: z.coerce.number().positive().int(),
+  },
 
   /**
    * Specify your client-side environment variables schema here.
@@ -25,6 +27,7 @@ export const env = createEnv({
    */
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    WAR_MACHINES_APP_PORT: process.env.WAR_MACHINES_APP_PORT,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

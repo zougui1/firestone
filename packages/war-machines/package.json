@@ -28,6 +28,7 @@
   "prettier": "@zougui/prettier-config",
   "dependencies": {
     "@zougui/firestone.error": "workspace:^",
+    "munkres-js": "^1.2.2",
     "neverthrow": "^8.2.0",
     "radash": "^12.1.1"
   }

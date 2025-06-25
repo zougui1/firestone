@@ -3,4 +3,7 @@ export * from './attackWarMachine';
 export * from './data';
 export * from './getDamageDealt';
 export * from './healWarMachine';
+export * from './calculateBlueprintCost';
+export * from './calculateLevelUpResources';
+export * from './estimateTimeForUpgrade';
 export * from './types';

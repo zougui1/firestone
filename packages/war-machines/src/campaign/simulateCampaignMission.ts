@@ -1,4 +1,4 @@
-import { getEnemySquad } from './getEnemySquad';
+import { getEnemySquad } from './utils/getEnemySquad';
 import { simulateCampaignBattle } from './simulateCampaignBattle';
 import type { Mission } from './types';
 import type { SimulationWarMachine } from '../types';

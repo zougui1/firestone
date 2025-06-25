@@ -1,11 +1,13 @@
 import { ok, err, type Result } from 'neverthrow';
 
 import { TaggedError } from '@zougui/firestone.error';
+import { type CampaignDifficulty } from '@zougui/firestone.types';
 
 import { defaultTotalSimulations } from './data';
-import { getEnemySquad } from './getEnemySquad';
+import { getEnemySquad } from './utils';
 import { simulateCampaignBattle, type CampaignBattleResult } from './simulateCampaignBattle';
 import type { MissionSummary } from './simulateCampaignSummary';
+import { type SimulationWarMachine } from '../types';
 
 class AbortError extends TaggedError('AbortError')<{ reason: unknown; }> {
 
@@ -13,6 +15,7 @@ class AbortError extends TaggedError('AbortError')<{ reason: unknown; }> {
 
 export const simulateDetailedMission = (
   summary: MissionSummary,
+  warMachines: SimulationWarMachine[],
   options: SimulateDetailedMissionOptions = {},
 ): Result<MissionResult, AbortError> => {
   const { onChange, signal, totalSimulations = defaultTotalSimulations } = options;
@@ -38,7 +41,7 @@ export const simulateDetailedMission = (
     }
 
     battles.push(simulateCampaignBattle({
-      playerWarMachines: structuredClone(enemySquad.warMachines),
+      playerWarMachines: structuredClone(warMachines),
       enemyWarMachines: structuredClone(enemySquad.warMachines),
     }));
 
@@ -64,3 +67,5 @@ export interface MissionResult extends MissionSummary {
   totalBattleCount: number;
   currentBattleCount: number;
 }
+
+export type DetailedCampaignResult = Record<CampaignDifficulty, MissionResult[]>;

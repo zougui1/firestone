@@ -48,7 +48,9 @@
   "globalEnv": [
     "DATABASE_URL",
     "DATABASE_NAME",
-    "PORT"
+    "DATABASE_NAME",
+    "PORT",
+    "WAR_MACHINES_APP_PORT"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

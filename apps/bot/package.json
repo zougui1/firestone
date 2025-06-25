@@ -14,7 +14,7 @@
     "with-env": "dotenv -e ../../.env -e .env --"
   },
   "dependencies": {
-    "@xstate/store": "^3.2.0",
+    "@xstate/store": "^3.6.2",
     "@zougui/firestone.db": "workspace:^",
     "axios": "^1.8.1",
     "big.js": "^6.2.2",
@@ -34,7 +34,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/node": "^22.15.29",
+    "@types/node": "^22.15.30",
     "@types/ws": "^8.18.1",
     "@zougui/eslint-config": "workspace:*",
     "@zougui/firestone.types": "workspace:^",

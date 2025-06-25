@@ -20,7 +20,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^22.15.29",
+    "@types/node": "^22.15.30",
     "@zougui/eslint-config": "workspace:*",
     "@zougui/prettier-config": "workspace:*",
     "@zougui/tsconfig": "workspace:*",

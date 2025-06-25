@@ -34,6 +34,7 @@ export const restrictEnvAccess = tseslint.config(
             "Use `import { env } from '~/env'` instead to ensure validated types.",
         },
       ],
+      '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
 );

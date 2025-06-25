@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm with-env next build",
+    "build:workers": "tsc -p tsconfig.worker.json",
     "clean": "git clean -xdf .cache .next .turbo node_modules",
     "dev": "pnpm with-env next dev --turbopack",
     "format": "prettier --check . --ignore-path ../../.gitignore",
@@ -17,21 +18,28 @@
     "@t3-oss/env-nextjs": "^0.13.6",
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query": "catalog:",
+    "@tanstack/react-table": "^8.21.3",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
+    "@xstate/store": "^3.6.2",
     "@zougui/api": "workspace:*",
     "@zougui/firestone.db": "workspace:*",
-    "@zougui/ui": "workspace:*",
+    "@zougui/firestone.error": "workspace:^",
+    "@zougui/firestone.types": "workspace:^",
+    "@zougui/firestone.war-machines": "workspace:^",
+    "@zougui/react.ui": "^0.1.21",
     "next": "^15.3.3",
     "postcss": "^8.5.4",
+    "radash": "^12.1.1",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "reselect": "^5.1.1",
     "superjson": "2.2.2",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^22.15.29",
+    "@types/node": "^22.15.30",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@zougui/eslint-config": "workspace:*",
@@ -43,7 +51,8 @@
     "jiti": "^2.4.2",
     "prettier": "catalog:",
     "tailwindcss": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "worker-loader": "^3.0.8"
   },
   "prettier": "@zougui/prettier-config"
 }

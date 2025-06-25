@@ -1,14 +1,9 @@
-import baseConfig, { restrictEnvAccess } from '@zougui/eslint-config/base';
-import nextjsConfig from '@zougui/eslint-config/nextjs';
-import reactConfig from '@zougui/eslint-config/react';
+import baseConfig from '@zougui/eslint-config/base';
 
 /** @type {import('typescript-eslint').Config} */
 export default [
   {
-    ignores: ['.next/**'],
+    ignores: [],
   },
   ...baseConfig,
-  ...reactConfig,
-  ...nextjsConfig,
-  ...restrictEnvAccess,
 ];
