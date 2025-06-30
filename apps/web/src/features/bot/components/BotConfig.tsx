@@ -217,15 +217,7 @@ export const BotConfig = () => {
         label="Map Missions"
         enabled={config.data.features.mapMission.enabled}
         onEnabledChange={toggleFeature('mapMission')}
-      >
-        <Label className="inline-flex flex-col items-start">
-          Squads
-          <Input
-            defaultValue={config.data.features.mapMission.squads}
-            onChange={handleNumberChange(squads => ({ features: { mapMission: { squads } } }))}
-          />
-        </Label>
-      </BotFeatureConfig>
+      />
     </div>
   );
 }
