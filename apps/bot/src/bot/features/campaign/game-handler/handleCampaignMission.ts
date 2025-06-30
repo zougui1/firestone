@@ -54,7 +54,7 @@ export const handleCampaignMission = () => {
           abilityActivationChance: warMachineRarityData[warMachine.rarity].abilityActivationChance,
         };
       }),
-    });
+    }, { ignoreRequirements: true });
 
     const maxWonMissions = {
       easy: 0,
