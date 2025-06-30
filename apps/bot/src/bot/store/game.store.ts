@@ -53,7 +53,7 @@ export const getSession = () => {
   }
 
   if (!gameVersion) {
-    return Effect.die(new Error('Missing request suffix'));
+    return Effect.die(new Error('Missing game version'));
   }
 
   return Effect.succeed({

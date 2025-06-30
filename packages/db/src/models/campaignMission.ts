@@ -9,11 +9,7 @@ const difficulties: CampaignDifficulty[] = ['easy', 'normal', 'hard', 'insane', 
 export const campaignMission = papr.model('campaignMissions', schema({
   level: types.number({ minimum: 1, required: true }),
   difficulty: types.enum(difficulties, { required: true }),
-  attempts: types.array(
-    types.object({
-      successChance: types.number({ minimum: 0, required: true }),
-    }),
-    { required: true },
-  ),
-  won: types.boolean({ required: true }),
+  attempts: types.number({ required: true }),
+  startedAt: types.date(),
+  wonAt: types.date(),
 }));

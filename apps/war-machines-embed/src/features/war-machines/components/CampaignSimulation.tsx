@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { Progress } from '~/components/ui';
+import { Label, Progress, Switch } from '~/components/ui';
 import { type CampaignDifficulty } from '@zougui/firestone.types';
 import { getTotalStars, type DetailedCampaignResult, type MissionResult } from '@zougui/firestone.war-machines/campaign';
 
@@ -81,10 +81,12 @@ export interface DifficultyResultProps {
 }
 
 export const CampaignSimulation = () => {
+  const [ignoreRequirements, setIgnoreRequirements] = useState(false);
   const [partialSimulationData, setPartialSimulationData] = useState<Partial<DetailedCampaignResult>>({});
 
   const { data } = useCampaignSimulation({
     onChange: setPartialSimulationData,
+    ignoreRequirements,
   });
 
   const dataJson = useMemo(() => JSON.stringify(data ?? ''), [data]);
@@ -99,8 +101,15 @@ export const CampaignSimulation = () => {
    */
   return (
     <div key={dataJson} className="space-y-4">
-      <div className="font-bold">
-        Total campaign stars possible: {totalCampaignStarsPossible}
+      <div className="font-bold inline-flex flex-col gap-0.5">
+        <span>Total campaign stars possible: {totalCampaignStarsPossible}</span>
+        <Label>
+          Ignore requirements
+          <Switch
+            checked={ignoreRequirements}
+            onCheckedChange={setIgnoreRequirements}
+          />
+        </Label>
       </div>
 
       {Object.entries(data ?? partialSimulationData).map(([difficulty, data]) => (

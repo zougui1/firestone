@@ -1,0 +1,34 @@
+{
+  "name": "@zougui/firestone-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@zougui/eslint-config": "workspace:*",
+    "@zougui/prettier-config": "workspace:*",
+    "@zougui/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@zougui/prettier-config",
+  "dependencies": {
+    "@xstate/store": "catalog:",
+    "@zougui/firestone.error": "workspace:^",
+    "neverthrow": "^8.2.0",
+    "ws": "^8.18.2",
+    "zod": "^3.25.67"
+  }
+}

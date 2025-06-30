@@ -8,11 +8,11 @@ import type { Mission, Squad } from './types';
 
 const statusBreaks: MissionSummary['status'][] = ['underreq', 'lose'];
 
-const getMissionSummary = (squad: Squad, mission: Mission): MissionSummary => {
+const getMissionSummary = (squad: Squad, mission: Mission, options?: SimulateCampaignSummaryOptions): MissionSummary => {
   const enemySquad = getEnemySquad(mission);
   const requiredPower = getRequiredPower(mission, enemySquad);
 
-  if (requiredPower > squad.totalPower) {
+  if (!options?.ignoreRequirements && requiredPower > squad.totalPower) {
     return {
       status: 'underreq',
       mission,
@@ -49,11 +49,11 @@ const getMissionSummary = (squad: Squad, mission: Mission): MissionSummary => {
   };
 }
 
-const getDifficultySummary = (squad: Squad, difficulty: CampaignDifficulty): MissionSummary[] => {
+const getDifficultySummary = (squad: Squad, difficulty: CampaignDifficulty, options?: SimulateCampaignSummaryOptions): MissionSummary[] => {
   const missions: MissionSummary[] = [];
 
   for (let level = 1; level <= maxCampaignMissions; level++) {
-    const summary = getMissionSummary(squad, { difficulty, level });
+    const summary = getMissionSummary(squad, { difficulty, level }, options);
     missions.push(summary);
 
     if (statusBreaks.includes(summary.status)) {
@@ -64,13 +64,13 @@ const getDifficultySummary = (squad: Squad, difficulty: CampaignDifficulty): Mis
   return missions;
 }
 
-export const simulateCampaignSummary = (squad: Squad): CampaignSummary => {
+export const simulateCampaignSummary = (squad: Squad, options?: SimulateCampaignSummaryOptions): CampaignSummary => {
   return {
-    easy: getDifficultySummary(squad, 'easy'),
-    normal: getDifficultySummary(squad, 'normal'),
-    hard: getDifficultySummary(squad, 'hard'),
-    insane: getDifficultySummary(squad, 'insane'),
-    nightmare: getDifficultySummary(squad, 'nightmare'),
+    easy: getDifficultySummary(squad, 'easy', options),
+    normal: getDifficultySummary(squad, 'normal', options),
+    hard: getDifficultySummary(squad, 'hard', options),
+    insane: getDifficultySummary(squad, 'insane', options),
+    nightmare: getDifficultySummary(squad, 'nightmare', options),
   };
 }
 
@@ -82,3 +82,7 @@ export interface MissionSummary {
 }
 
 export type CampaignSummary = Record<CampaignDifficulty, MissionSummary[]>;
+
+export interface SimulateCampaignSummaryOptions {
+  ignoreRequirements?: boolean;
+}

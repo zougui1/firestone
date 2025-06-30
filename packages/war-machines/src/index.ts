@@ -7,3 +7,4 @@ export * from './calculateBlueprintCost';
 export * from './calculateLevelUpResources';
 export * from './estimateTimeForUpgrade';
 export * from './types';
+export * as campaign from './campaign';

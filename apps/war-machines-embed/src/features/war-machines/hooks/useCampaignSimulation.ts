@@ -40,7 +40,7 @@ export const useCampaignSimulation = (options?: UseCampaignSimulationOptions) =>
   const { data } = useBestCampaignFormation();
 
   return useQuery({
-    queryKey: ['simulateCampaign', data],
+    queryKey: ['simulateCampaign', data, options?.ignoreRequirements],
     queryFn: async ({ signal }) => {
       if (!data) {
         return null;
@@ -55,7 +55,7 @@ export const useCampaignSimulation = (options?: UseCampaignSimulationOptions) =>
       const summary = simulateCampaignSummary({
         warMachines,
         totalPower: data.campaignPower
-      });
+      }, options);
       const getDetails = (mission: MissionSummary): MissionResult => ({
         ...mission,
         successChance: mission.status === 'win' ? 100 : 0,
@@ -103,5 +103,6 @@ export const useCampaignSimulation = (options?: UseCampaignSimulationOptions) =>
 }
 
 export interface UseCampaignSimulationOptions {
+  ignoreRequirements?: boolean;
   onChange?: (data: DetailedCampaignResult) => void;
 }

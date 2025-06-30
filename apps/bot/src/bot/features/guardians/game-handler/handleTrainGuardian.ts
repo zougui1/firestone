@@ -12,15 +12,64 @@ const guardianIds = {
   Azhar: 3,
 } as const;
 
+const guardianById = {
+  0: 'Vermillion',
+  1: 'Grace',
+  2: 'Ankaa',
+  3: 'Azhar',
+} as const;
+
+const guardianPriorities = [
+  'Grace',
+  'Vermillion',
+  'Ankaa',
+  'Azhar',
+] as const;
+
+const getGuardianId = (config: database.config.ConfigType) => {
+  return Effect.gen(function* () {
+    const { guardian } = config.features.guardianTraining;
+
+    if (guardian !== 'auto') {
+      return guardianIds[guardian];
+    }
+
+    const data = yield* api.user.inspect({
+      userId: env.firestone.userId,
+    });
+
+    const guardiansByEvolution = Object.groupBy(data.guardians, g => g.evolution ?? 0);
+    const evolutions = Object.keys(guardiansByEvolution).map(Number);
+    const lowestEvolution = Math.min(...evolutions);
+    const lowestGuardians = guardiansByEvolution[lowestEvolution];
+
+    if (!lowestGuardians) {
+      return guardianIds.Vermillion;
+    }
+
+    const priorities = lowestGuardians.map(g => guardianPriorities.indexOf(g));
+    const guardianToTrain = guardianPriorities[Math.min(...priorities)];
+
+    if (!guardianToTrain) {
+      return guardianIds.Vermillion;
+    }
+
+    return guardianIds[guardianToTrain];
+  });
+}
+
 export const handleTrainGuardian = () => {
   return Effect.gen(function* () {
     const eventQueue = yield* EventQueue;
     const config = yield* database.config.findOne();
-    const { guardian, cooldownSeconds } = config.features.guardianTraining;
+    const { cooldownSeconds } = config.features.guardianTraining;
+
+    const guardianId = yield* getGuardianId(config);
+    const guardian = guardianById[guardianId];
 
     yield* Effect.log(`Training guardian ${guardian}`);
     const { trained } = yield* api.guardians.trainGuardian({
-      id: guardianIds[guardian],
+      id: guardianId,
     }).pipe(
       Effect.as({ trained: true }),
       Effect.catchTag('TimeoutError', () => pipe(

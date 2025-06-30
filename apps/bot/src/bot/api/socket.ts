@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import { Effect, pipe } from 'effect';
 import { type DurationInput } from 'effect/Duration';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import { game } from '../store';
 import { env } from '../../env';
@@ -93,7 +93,7 @@ export const waitResponse = <T extends z.ZodSchema>(
   specificResponseSchema: z.ZodObject<{ Function: z.ZodLiteral<string>; SubFunction?: z.ZodLiteral<string>; }>,
   dataSchema: T,
 ) => {
-  return Effect.async<z.infer<T>, TimeoutError | ResponseError | Error>(resume => {
+  return Effect.async<z.output<T>, TimeoutError | ResponseError | Error>(resume => {
     const errors: Error[] = [];
 
     const timeout = setTimeout(() => {
@@ -146,7 +146,7 @@ export const waitResponse = <T extends z.ZodSchema>(
 
       if (!dataResult.success) {
         cleanup();
-        return resume(Effect.fail(new Error('Invalid data in response', { cause: dataResult.error })));
+        return resume(Effect.fail(new Error('Invalid data in response', { cause: z.prettifyError(dataResult.error) })));
       }
 
       cleanup();

@@ -1,7 +1,8 @@
 import type { NextRequest } from 'next/server';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 
-import { appRouter, createTRPCContext } from '@zougui/api';
+import { createTRPCContext } from '~/server/api/trpc';
+import { appRouter } from '~/server/api/root';
 
 /**
  * Configure basic CORS headers

@@ -6,6 +6,7 @@ import { cn } from '~/components/ui';
 import { TRPCReactProvider } from '~/trpc/react';
 
 import '~/app/globals.css';
+import { Header } from '~/components/Header';
 
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'),
@@ -40,12 +41,18 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'dark bg-background text-foreground min-h-screen font-sans antialiased',
+          'dark bg-background text-foreground min-h-screen font-sans antialiased [--header-height:40px]',
           geistSans.variable,
           geistMono.variable,
         )}
       >
-        <TRPCReactProvider>{props.children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Header />
+
+          <div className="h-[calc(100vh-var(--header-height))]">
+            {props.children}
+          </div>
+        </TRPCReactProvider>
       </body>
     </html>
   );

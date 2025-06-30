@@ -29,6 +29,7 @@
     "@zougui/firestone.types": "workspace:^",
     "@zougui/firestone.war-machines": "workspace:^",
     "@zougui/react.ui": "^0.1.21",
+    "flat": "^6.0.1",
     "next": "^15.3.3",
     "postcss": "^8.5.4",
     "radash": "^12.1.1",
@@ -51,6 +52,7 @@
     "jiti": "^2.4.2",
     "prettier": "catalog:",
     "tailwindcss": "catalog:",
+    "type-fest": "^4.41.0",
     "typescript": "catalog:",
     "worker-loader": "^3.0.8"
   },

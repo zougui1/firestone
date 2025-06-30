@@ -8,7 +8,7 @@ catalog:
   tailwindcss: ^4.1.10
   "@tailwindcss/vite": ^4.1.10
   typescript: ^5.8.3
-  zod: ^3.25.49
+  zod: ^3.25.67
   "@tanstack/react-query": ^5.80.7
   "@tanstack/react-table": ^8.21.3
   "@trpc/client": ^11.4.0

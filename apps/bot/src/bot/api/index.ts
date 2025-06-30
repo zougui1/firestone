@@ -8,3 +8,4 @@ export * as guardians from './guardians';
 export * as alchemist from './alchemist';
 export * as campaign from './campaign';
 export * as oracle from './oracle';
+export * as user from './user';

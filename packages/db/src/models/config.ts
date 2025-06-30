@@ -4,7 +4,7 @@ import type { GameFeature, Guardian } from '@zougui/firestone.types';
 
 import { papr } from '../client';
 
-const guardians: Guardian[] = ['Vermillion', 'Grace', 'Ankaa', 'Azhar'];
+const guardians: (Guardian | 'auto')[] = ['Vermillion', 'Grace', 'Ankaa', 'Azhar', 'auto'];
 
 export const config = papr.model('configs', schema({
   sessionId: types.string({ required: true }),

@@ -11,9 +11,9 @@ import {
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import SuperJSON from 'superjson';
 
-import type { AppRouter } from '@zougui/api';
-
 import { env } from '~/env';
+import { type AppRouter } from '~/server/api/root';
+
 import { createQueryClient } from './query-client';
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;

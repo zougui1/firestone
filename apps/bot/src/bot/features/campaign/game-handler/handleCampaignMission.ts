@@ -1,37 +1,119 @@
 import { Effect, pipe } from 'effect';
+import { sort, sum } from 'radash';
+
+import { warMachineRarityData } from '@zougui/firestone.war-machines';
+import { simulateCampaignSummary } from '@zougui/firestone.war-machines/campaign';
 
 import * as api from '../../../api';
 import * as database from '../../../database';
 import { EventQueue } from '../../../eventQueue';
 import { env } from '../../../../env';
 
-// TODO get those values from successful simulations
-const level = 10;
-const difficulty = 'easy';
-const diff = 1;
-const successChance = 0.1;
+const idleTimeoutSeconds = 60 * 10;
+const missionCodes = {
+  easy: 0,
+  normal: 1,
+  hard: 2,
+  insane: 3,
+  nightmare: 4,
+};
 
 export const handleCampaignMission = () => {
   return Effect.gen(function* () {
-    const config = yield* database.config.findOne();
     const eventQueue = yield* EventQueue;
+    const config = yield* database.config.findOne();
 
-    const { done, hasWon } = yield* api.campaign.startBattle({ mission: level, difficulty: diff }).pipe(
-      Effect.map(result => ({ ...result, done: true })),
-      Effect.catchTag('TimeoutError', () => pipe(
-        Effect.logWarning('Request to start campaign battle timed out'),
-        Effect.as({ done: false, hasWon: false }),
+    if (!config.features.campaignMission.enabled) {
+      yield* eventQueue.add({
+        type: 'campaignMission',
+        timeoutMs: env.firestone.blindTimeoutSeconds * 1000,
+      });
+      return;
+    }
+
+    const data = yield* api.user.inspect({
+      userId: env.firestone.userId,
+    });
+    const missionsWonList = yield* database.campaignMission.findWon();
+
+    const team = sort(
+      data.warMachines,
+      warMachine => warMachine.slot ?? -1,
+    ).slice(0, 5);
+
+    const campaignSummary = simulateCampaignSummary({
+      totalPower: sum(team, warMachine => Math.floor(
+        Math.pow(warMachine.damage * 10, 0.7) +
+        Math.pow(warMachine.health, 0.7) +
+        Math.pow(warMachine.damage * 10, 0.7)
       )),
+      warMachines: team.map(warMachine => {
+        return {
+          ...warMachine,
+          maxHealth: warMachine.health,
+          abilityActivationChance: warMachineRarityData[warMachine.rarity].abilityActivationChance,
+        };
+      }),
+    });
+
+    const maxWonMissions = {
+      easy: 0,
+      normal: 0,
+      hard: 0,
+      insane: 0,
+      nightmare: 0,
+    };
+
+    for (const mission of missionsWonList) {
+      maxWonMissions[mission.difficulty]++;
+    }
+
+    const summaryMissions = [
+      ...campaignSummary.easy,
+      ...campaignSummary.normal,
+      ...campaignSummary.hard,
+      ...campaignSummary.insane,
+      ...campaignSummary.nightmare,
+    ];
+
+    const missionToDo = summaryMissions.find(summary => {
+      return (
+        (summary.status === 'win' || summary.status === 'can-win') &&
+        summary.mission.level > maxWonMissions[summary.mission.difficulty]
+      );
+    });
+
+    if (!missionToDo) {
+      yield* eventQueue.add({
+        type: 'campaignMission',
+        timeoutMs: idleTimeoutSeconds * 1000,
+      });
+      return;
+    }
+
+    const { level, difficulty } = missionToDo.mission;
+
+    const { done, hasWon } = yield* api.campaign.startBattle({
+      mission: level - 1,
+      difficulty: missionCodes[difficulty],
+    }).pipe(
+      Effect.map(result => ({ ...result, done: true })),
+      Effect.catchTags({
+        TimeoutError: () => pipe(
+          Effect.logWarning('Request to start campaign battle timed out'),
+          Effect.as({ done: false, hasWon: false }),
+        ),
+        ResponseError: () => Effect.succeed({ done: true, hasWon: true }),
+      }),
     );
 
     const timeoutSeconds = done
       ? config.features.campaignMission.battleCooldownSeconds
-      : env.firestone.blindTimeoutSeconds;
+      : idleTimeoutSeconds;
 
     yield* database.campaignMission.addAttempt({
       level,
       difficulty,
-      successChance,
       won: hasWon,
     });
 

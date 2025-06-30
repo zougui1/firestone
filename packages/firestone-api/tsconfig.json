@@ -1,0 +1,8 @@
+{
+  "extends": "@zougui/tsconfig/internal-package.json",
+  "compilerOptions": {
+    "lib": ["ES2024"]
+  },
+  "include": ["*.ts", "src"],
+  "exclude": ["node_modules"]
+}

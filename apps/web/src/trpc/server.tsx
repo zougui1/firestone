@@ -4,8 +4,8 @@ import { headers } from 'next/headers';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
-import type { AppRouter } from '@zougui/api';
-import { appRouter, createTRPCContext } from '@zougui/api';
+import { createTRPCContext } from '~/server/api/trpc';
+import { appRouter, type AppRouter } from '~/server/api/root';
 
 import { createQueryClient } from './query-client';
 
