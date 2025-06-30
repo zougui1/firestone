@@ -49,9 +49,45 @@ export const BotConfig = () => {
     }
   }
 
+  const handleToggleAll = (enabled: boolean) => {
+    updateConfig({
+      features: {
+        alchemyExperiment: { enabled },
+        campaignLoot: { enabled },
+        campaignMission: { enabled },
+        engineerTools: { enabled },
+        firestoneResearch: { enabled },
+        guardianTraining: { enabled },
+        guildExpedition: { enabled },
+        mapMission: { enabled },
+        oracleRitual: { enabled },
+        pickaxesClaiming: { enabled },
+      },
+    });
+  }
+
   return (
     <div className="flex flex-col gap-4 divide-y-[1px] divide-slate-500">
       <div className="flex gap-2 pb-4">
+        <Label>
+          Toggle All
+          <Switch
+            checked={(
+              config.data.features.alchemyExperiment.enabled ||
+              config.data.features.campaignLoot.enabled ||
+              config.data.features.campaignMission.enabled ||
+              config.data.features.engineerTools.enabled ||
+              config.data.features.firestoneResearch.enabled ||
+              config.data.features.guardianTraining.enabled ||
+              config.data.features.guildExpedition.enabled ||
+              config.data.features.mapMission.enabled ||
+              config.data.features.oracleRitual.enabled ||
+              config.data.features.pickaxesClaiming.enabled
+            )}
+            onCheckedChange={handleToggleAll}
+          />
+        </Label>
+
         <Label className="inline-flex flex-col items-start">
           Session ID
           <Input
