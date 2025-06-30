@@ -9,7 +9,6 @@ import {
 
 import { Table } from './Table';
 import { cn } from './utils';
-import { ScrollArea } from './ScrollArea';
 
 export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   const {
@@ -18,7 +17,6 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     onHoverRow,
     getHighlightedRow,
     className,
-    classes,
   } = props;
 
   const table = useReactTable({
@@ -85,7 +83,4 @@ interface DataTableProps<TData, TValue> {
   onHoverRow?: (event: React.MouseEvent<HTMLTableRowElement>, data?: TData) => void;
   getHighlightedRow?: (data: TData) => boolean;
   className?: string;
-  classes?: {
-    scrollArea?: string;
-  };
 }
