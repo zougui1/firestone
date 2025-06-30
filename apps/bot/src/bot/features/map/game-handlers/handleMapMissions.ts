@@ -71,12 +71,6 @@ export const handleMapMissions = () => {
     const eventQueue = yield* EventQueue;
     let state = mapStore.getSnapshot().context;
 
-    if (state.squads === state.maxSquads) {
-      const config = yield* database.config.findOne();
-      state.squads = config.features.mapMission.squads;
-      state.maxSquads = config.features.mapMission.squads;
-    }
-
     yield* Effect.log('Refreshing map missions');
     const cycleStatus = getCycleStatus();
 
@@ -157,16 +151,6 @@ export const handleMapMissions = () => {
     let hasStartedMissions = false;
 
     for (const mission of unstartedMissions) {
-      if (state.squads <= 0) {
-        yield* Effect.logDebug('No squads left to start map missions');
-        break;
-      }
-
-      if (state.squads < mission.type.squads) {
-        yield* Effect.logDebug(`Not enough squads left to start map mission ${mission.name} of type ${mission.type.name}`);
-        continue;
-      }
-
       yield* Effect.logDebug(`Starting mission ${mission.name}`);
       yield* api.mapMissions
         .start({ id: mission.id })

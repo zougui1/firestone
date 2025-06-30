@@ -4,7 +4,8 @@ import { catchError } from './catchError';
 
 export const jsonSchema = <T extends z.ZodType>(schema: T) => {
   return z.string().transform((str, ctx): z.infer<T> => {
-    if (!str && schema.isOptional()) {
+    if (!str && schema.safeParse(undefined).success) {
+      // @ts-expect-error for some reason zod doesn't like it in V4
       return;
     }
 

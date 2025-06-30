@@ -9,21 +9,16 @@ export interface MissionState {
   startDate?: Date;
   claimed?: boolean;
   durationSeconds: number;
-  squads: number;
   type: Mission['type'];
 }
 
 export interface MapState {
-  squads: number;
-  maxSquads: number;
   cycleStartDate?: Date;
   missions: Record<string, MissionState>;
   prevMissions: Record<string, MissionState>;
 }
 
 const initialState: MapState = {
-  squads: 0,
-  maxSquads: 0,
   missions: {},
   prevMissions: {},
 };
@@ -32,7 +27,6 @@ const getEnsuredMission = (mission: Mission, missionRecord: Record<string, Missi
   return missionRecord[mission.id] ?? {
     id: mission.id,
     name: mission.name,
-    squads: mission.type.squads,
     durationSeconds: mission.type.minDurationSeconds * 60,
     type: mission.type,
   };
@@ -48,7 +42,6 @@ export const mapStore = createStore({
       return produce(context, draft => {
         draft.missions[event.mission.name] = getEnsuredMission(event.mission, draft.missions);
         draft.missions[event.mission.id]!.startDate = new Date();
-        draft.squads -= draft.missions[event.mission.name]! .squads;
       });
     },
 
@@ -58,7 +51,6 @@ export const mapStore = createStore({
 
         missionRecord[event.mission.name] = getEnsuredMission(event.mission, missionRecord);
         missionRecord[event.mission.name]!.claimed = true;
-        draft.squads += missionRecord[event.mission.name]!.squads;
       });
     },
 
