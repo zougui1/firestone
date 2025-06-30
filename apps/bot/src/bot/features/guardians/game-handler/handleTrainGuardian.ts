@@ -41,9 +41,11 @@ const getGuardianId = (config: database.config.ConfigType) => {
     const guardiansByEvolution = Object.groupBy(data.guardians, g => g.evolution ?? 0);
     const evolutions = Object.keys(guardiansByEvolution).map(Number);
     const lowestEvolution = Math.min(...evolutions);
-    const lowestGuardians = guardiansByEvolution[lowestEvolution];
+    const lowestGuardians = guardiansByEvolution[lowestEvolution]
+      ?.map(g => guardianById[g.code])
+      .filter(Boolean);
 
-    if (!lowestGuardians) {
+    if (!lowestGuardians?.length) {
       return guardianIds.Vermillion;
     }
 
