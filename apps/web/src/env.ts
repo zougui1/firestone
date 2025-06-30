@@ -13,6 +13,7 @@ export const env = createEnv({
    */
   server: {
     WAR_MACHINES_APP_PORT: z.coerce.number().positive().int(),
+    WAR_MACHINES_APP_DOMAIN: z.string(),
   },
 
   /**
@@ -28,6 +29,7 @@ export const env = createEnv({
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     WAR_MACHINES_APP_PORT: process.env.WAR_MACHINES_APP_PORT,
+    WAR_MACHINES_APP_DOMAIN: process.env.WAR_MACHINES_APP_DOMAIN,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

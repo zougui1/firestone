@@ -50,7 +50,8 @@
     "DATABASE_NAME",
     "DATABASE_NAME",
     "PORT",
-    "WAR_MACHINES_APP_PORT"
+    "WAR_MACHINES_APP_PORT",
+    "WAR_MACHINES_APP_DOMAIN"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
