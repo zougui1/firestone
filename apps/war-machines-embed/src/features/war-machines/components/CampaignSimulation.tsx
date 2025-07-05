@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
+import { useSelector } from '@xstate/store/react';
 
-import { Label, Progress, Switch } from '~/components/ui';
 import { type CampaignDifficulty } from '@zougui/firestone.types';
 import { getTotalStars, type DetailedCampaignResult, type MissionResult } from '@zougui/firestone.war-machines/campaign';
 
+import { Label, Progress, Switch } from '~/components/ui';
+
 import { useCampaignSimulation } from '../hooks';
+import { settingsStore } from '../settingsStore';
 
 const numberFormatter = Intl.NumberFormat('en-US');
 
@@ -81,7 +84,7 @@ export interface DifficultyResultProps {
 }
 
 export const CampaignSimulation = () => {
-  const [ignoreRequirements, setIgnoreRequirements] = useState(false);
+  const ignoreRequirements = useSelector(settingsStore, state => state.context.ignoreRequirements);
   const [partialSimulationData, setPartialSimulationData] = useState<Partial<DetailedCampaignResult>>({});
 
   const { data } = useCampaignSimulation({
@@ -107,7 +110,7 @@ export const CampaignSimulation = () => {
           Ignore requirements
           <Switch
             checked={ignoreRequirements}
-            onCheckedChange={setIgnoreRequirements}
+            onCheckedChange={value => settingsStore.trigger.updateIgnoreRequirements({ value })}
           />
         </Label>
       </div>

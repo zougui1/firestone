@@ -199,7 +199,7 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     const summary = simulateCampaignSummary({
       warMachines: simulationWarMachines,
       totalPower: computedData.campaignPower,
-    });
+    }, { ignoreRequirements: options?.ignoreRequirements });
 
     const getDetails = (mission: MissionSummary): MissionResult => ({
       ...mission,
@@ -332,5 +332,5 @@ export interface TargetStar {
 
 export interface FindTargetStarFormationOptions {
   signal?: AbortSignal;
-  //onChange?: (data: Partial<Record<Difficulty, CampaignDifficultySimulationResult>>) => void;
+  ignoreRequirements?: boolean;
 }
