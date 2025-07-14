@@ -9,5 +9,6 @@ export const checkSessionValidity = () => {
       ResponseError: () => Effect.succeed(true),
       TimeoutError: () => Effect.succeed(false),
     }),
+    Effect.catchAll(e => Effect.die(e)),
   );
 }

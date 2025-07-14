@@ -51,7 +51,8 @@
     "DATABASE_NAME",
     "PORT",
     "WAR_MACHINES_APP_PORT",
-    "WAR_MACHINES_APP_DOMAIN"
+    "WAR_MACHINES_APP_DOMAIN",
+    "BOT_SERVICE_NAME"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

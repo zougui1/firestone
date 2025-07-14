@@ -73,8 +73,8 @@ export const BotConfig = () => {
 
   const onRestart = async () => {
     try {
-      //await restartMutation.mutateAsync();
-      toast.error('The bot has been restarted');
+      await restartMutation.mutateAsync();
+      toast.success('The bot has been restarted');
     } catch {
       toast.success('Failed to restart the bot');
     }
