@@ -1,15 +1,18 @@
 'use client';
 
 import { isNumber } from 'radash';
+import { toast } from 'sonner';
 import { type PartialDeep } from 'type-fest';
 
 import { type db } from '@zougui/firestone.db';
 import { type Guardian } from '@zougui/firestone.types';
 
-import { Input, Label, Select, Switch, Typography } from '~/components/ui';
+import { Button, Input, Label, Select, Switch, Typography } from '~/components/ui';
+import { useTRPC } from '~/trpc/react';
 
 import { BotFeatureConfig } from './BotFeatureConfig';
 import { useBotConfig, useUpdateBotConfig } from '../hooks';
+import { useMutation } from '@tanstack/react-query';
 
 const guardians: Record<Guardian, Guardian> = {
   Vermillion: 'Vermillion',
@@ -21,8 +24,10 @@ const guardians: Record<Guardian, Guardian> = {
 type Config = Omit<typeof db.config.schema, '_id'> & { _id: string; };
 
 export const BotConfig = () => {
+  const trpc = useTRPC();
   const config = useBotConfig();
   const updateConfig = useUpdateBotConfig(config);
+  const restartMutation = useMutation(trpc.bot.restart.mutationOptions());
 
   if (!config.data || !config.serverData) {
     return (
@@ -66,9 +71,25 @@ export const BotConfig = () => {
     });
   }
 
+  const onRestart = async () => {
+    try {
+      //await restartMutation.mutateAsync();
+      toast.error('The bot has been restarted');
+    } catch {
+      toast.success('Failed to restart the bot');
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 divide-y-[1px] divide-slate-500">
-      <div className="flex gap-2 pb-4">
+      <div className="flex items-center gap-2 pb-4">
+        <Button
+          onClick={onRestart}
+          loading={restartMutation.isPending}
+        >
+          Restart bot
+        </Button>
+
         <Label>
           Toggle All
           <Switch

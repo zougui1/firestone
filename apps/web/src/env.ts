@@ -14,6 +14,7 @@ export const env = createEnv({
   server: {
     WAR_MACHINES_APP_PORT: z.coerce.number().positive().int(),
     WAR_MACHINES_APP_DOMAIN: z.string(),
+    BOT_SERVICE_NAME: z.string(),
   },
 
   /**
@@ -26,10 +27,11 @@ export const env = createEnv({
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
    */
-  experimental__runtimeEnv: {
+  runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     WAR_MACHINES_APP_PORT: process.env.WAR_MACHINES_APP_PORT,
     WAR_MACHINES_APP_DOMAIN: process.env.WAR_MACHINES_APP_DOMAIN,
+    BOT_SERVICE_NAME: process.env.BOT_SERVICE_NAME,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

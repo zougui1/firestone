@@ -1,10 +1,13 @@
 import { z } from 'zod/v4';
 import { flatten } from 'flat';
+import { execa } from 'execa';
 
 import { db } from '@zougui/firestone.db';
 import { type Guardian } from '@zougui/firestone.types';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { env } from '~/env';
+import { TRPCError } from '@trpc/server';
 
 const guardians: (Guardian | 'auto')[] = ['Vermillion', 'Grace', 'Ankaa', 'Azhar', 'auto'];
 
@@ -83,5 +86,20 @@ export const botRouter = createTRPCRouter({
       { _id: new db.ObjectId(input._id) },
       { $set: flatten(input.data) },
     );
+  }),
+
+  restart: publicProcedure.mutation(async () => {
+    try {
+      const result = await execa('sudo', ['systemctl', 'restart', env.BOT_SERVICE_NAME], {
+        timeout: 3000,
+      });
+
+      if (result.failed || result.timedOut) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    } catch (error) {
+      console.error(error);
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+    }
   }),
 });

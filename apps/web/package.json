@@ -29,6 +29,7 @@
     "@zougui/firestone.types": "workspace:^",
     "@zougui/firestone.war-machines": "workspace:^",
     "@zougui/react.ui": "^0.1.21",
+    "execa": "^9.6.0",
     "flat": "^6.0.1",
     "next": "^15.3.3",
     "postcss": "^8.5.4",

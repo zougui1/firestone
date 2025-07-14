@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import { cn } from '~/components/ui';
-
-import { TRPCReactProvider } from '~/trpc/react';
-
 import '~/app/globals.css';
+import { cn } from '~/components/ui';
+import { TRPCReactProvider } from '~/trpc/react';
 import { Header } from '~/components/Header';
+import { Toaster } from '~/components/ui/Toaster';
 
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'),
@@ -51,6 +50,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 
           <div className="h-[calc(100vh-var(--header-height))]">
             {props.children}
+            <Toaster />
           </div>
         </TRPCReactProvider>
       </body>
