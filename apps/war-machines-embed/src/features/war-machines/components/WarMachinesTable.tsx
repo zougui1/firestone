@@ -23,7 +23,7 @@ const handleLevelChange = (name: string, field: keyof WarMachine) => {
 const getNumberInputColumn = (field: keyof WarMachine, label: string): ColumnDef<string> => {
   return {
     accessorKey: field,
-    meta: { className: 'w-1/8' },
+    meta: { className: 'w-1/9' },
     header: label,
     cell: function InputCell({ row }: CellContext<string, unknown>) {
       const name = row.original;
@@ -49,6 +49,7 @@ const columns: ColumnDef<string>[] = [
   },
   getNumberInputColumn('level', 'Level'),
   getNumberInputColumn('sacredCardLevel', 'Sacred Card Level'),
+  getNumberInputColumn('lostInscriptionLevel', 'Lost Inscription Level'),
   getNumberInputColumn('damageBlueprintLevel', 'Damage Blueprint Level'),
   getNumberInputColumn('healthBlueprintLevel', 'Health Blueprint Level'),
   getNumberInputColumn('armorBlueprintLevel', 'Armor Blueprint Level'),

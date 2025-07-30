@@ -8,6 +8,7 @@ export const warMachineSchema = z.object({
   name: z.string(),
   level: z.number().optional(),
   sacredCardLevel: z.number().optional(),
+  lostInscriptionLevel: z.number().optional(),
   damageBlueprintLevel: z.number().optional(),
   healthBlueprintLevel: z.number().optional(),
   armorBlueprintLevel: z.number().optional(),

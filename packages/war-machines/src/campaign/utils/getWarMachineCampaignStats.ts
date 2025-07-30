@@ -12,6 +12,7 @@ export const getWarMachineCampaignStats = (warMachine: WarMachineInput, crew: Cr
 
   const rarityBonus = Math.pow(1.05, rarityLevel + allRarityLevels) - 1;
   const sacredCardBonus = Math.pow(1.05, warMachine.sacredCardLevel ?? 0);
+  const lostInscriptionBonus = Math.pow(1.05, warMachine.lostInscriptionLevel ?? 0);
 
   const blueprintDamageBonus = Math.pow(1.05, warMachine.damageBlueprintLevel ?? 0) - 1;
   const blueprintHealthBonus = Math.pow(1.05, warMachine.healthBlueprintLevel ?? 0) - 1;
@@ -54,15 +55,15 @@ export const getWarMachineCampaignStats = (warMachine: WarMachineInput, crew: Cr
   armorArtifactBonus--;
 
   const getBaseDamage = (): number => {
-    return baseData.damage * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintDamageBonus + 1) * sacredCardBonus * (damageArtifactBonus + 1);
+    return baseData.damage * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintDamageBonus + 1) * sacredCardBonus * lostInscriptionBonus * (damageArtifactBonus + 1);
   }
 
   const getBaseHealth = (): number => {
-    return baseData.health * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintHealthBonus + 1) * sacredCardBonus * (healthArtifactBonus + 1);
+    return baseData.health * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintHealthBonus + 1) * sacredCardBonus * lostInscriptionBonus * (healthArtifactBonus + 1);
   }
 
   const getBaseArmor = (): number => {
-    return baseData.armor * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintArmorBonus + 1) * sacredCardBonus * (armorArtifactBonus + 1);
+    return baseData.armor * (levelBonus + 1) * (engineerBonus + 1) * (rarityBonus + 1) * (blueprintArmorBonus + 1) * sacredCardBonus * lostInscriptionBonus * (armorArtifactBonus + 1);
   }
 
   const getDamage = (): number => {

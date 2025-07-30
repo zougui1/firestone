@@ -29,7 +29,7 @@ export const WarMachines = () => {
             </Accordion.Trigger>
 
             <Accordion.Content>
-              <WarMachinesTable className="max-w-3xl" />
+              <WarMachinesTable className="max-w-4xl" />
             </Accordion.Content>
           </Accordion.Item>
 
