@@ -2,7 +2,7 @@ import { Effect, pipe } from 'effect';
 import { sort, sum } from 'radash';
 
 import { warMachineRarityData } from '@zougui/firestone.war-machines';
-import { simulateCampaignSummary } from '@zougui/firestone.war-machines/campaign';
+import { simulateCampaignSummary, simulateDetailedMission } from '@zougui/firestone.war-machines/campaign';
 
 import * as api from '../../../api';
 import * as database from '../../../database';
@@ -40,6 +40,13 @@ export const handleCampaignMission = () => {
       data.warMachines,
       warMachine => warMachine.slot ?? -1,
     ).slice(0, 5);
+    const warMachines = team.map(warMachine => {
+      return {
+        ...warMachine,
+        maxHealth: warMachine.health,
+        abilityActivationChance: warMachineRarityData[warMachine.rarity].abilityActivationChance,
+      };
+    });
 
     const campaignSummary = simulateCampaignSummary({
       totalPower: sum(team, warMachine => Math.floor(
@@ -47,13 +54,7 @@ export const handleCampaignMission = () => {
         Math.pow(warMachine.health, 0.7) +
         Math.pow(warMachine.damage * 10, 0.7)
       )),
-      warMachines: team.map(warMachine => {
-        return {
-          ...warMachine,
-          maxHealth: warMachine.health,
-          abilityActivationChance: warMachineRarityData[warMachine.rarity].abilityActivationChance,
-        };
-      }),
+      warMachines,
     }, { ignoreRequirements: true });
 
     const maxWonMissions = {
@@ -68,13 +69,23 @@ export const handleCampaignMission = () => {
       maxWonMissions[mission.difficulty]++;
     }
 
-    const summaryMissions = [
+    const allSummaries = [
       ...campaignSummary.easy,
       ...campaignSummary.normal,
       ...campaignSummary.hard,
       ...campaignSummary.insane,
       ...campaignSummary.nightmare,
     ];
+
+    const summaryMissions = sort(
+      allSummaries.map(summary => simulateDetailedMission(
+        summary,
+        warMachines,
+        { totalSimulations: 100 },
+      ).unwrapOr(undefined)).filter(v => !!v),
+      summary => summary.successChance,
+      true,
+    );
 
     const missionToDo = summaryMissions.find(summary => {
       return (
