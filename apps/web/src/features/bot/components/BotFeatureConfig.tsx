@@ -1,21 +1,26 @@
 'use client';
 
 import { cn, Switch, Typography } from '~/components/ui';
+import { Card } from '~/components/ui/Card';
 
-export const BotFeatureConfig = ({ label, enabled, onEnabledChange, className, children }: BotFeatureConfigProps) => {
+export const BotFeatureConfig = ({ label, enabled, onEnabledChange, children, className }: BotFeatureConfigProps) => {
   return (
-    <section className="flex flex-col gap-4 pb-4">
-      <div className="flex items-center gap-2">
+    <Card.Root className="w-5/12">
+      <Card.Header className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <Switch
+          checked={enabled}
+          onCheckedChange={onEnabledChange}
+          className="cursor-pointer data-[state=checked]:bg-success"
+        />
         <Typography.H4>{label}</Typography.H4>
-        <Switch checked={enabled} onCheckedChange={onEnabledChange} />
-      </div>
+      </Card.Header>
 
       {children && (
-        <div className={cn('flex gap-4', className)}>
+        <Card.Content className={cn('flex flex-wrap gap-4', className)}>
           {children}
-        </div>
+        </Card.Content>
       )}
-    </section>
+    </Card.Root>
   );
 }
 

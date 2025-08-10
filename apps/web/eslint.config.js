@@ -6,4 +6,9 @@ export default [
     ignores: [],
   },
   ...baseConfig,
+  {
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    }
+  },
 ];
