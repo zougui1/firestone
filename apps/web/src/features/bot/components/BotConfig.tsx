@@ -4,6 +4,7 @@ import { isNumber, sort } from 'radash';
 import { toast } from 'sonner';
 import { type PartialDeep } from 'type-fest';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Check } from 'lucide-react';
 
 import { type db } from '@zougui/firestone.db';
 import { type Guardian } from '@zougui/firestone.types';
@@ -162,8 +163,12 @@ export const BotConfig = () => {
 
           <div>
             {sort(lastMissions ?? [], m => difficultyOrder[m.difficulty]).map(mission => (
-              <div key={mission.difficulty} className="capitalize">
-                {mission.difficulty} {mission.level}: {mission.attempts}
+              <div key={mission.difficulty} className="flex gap-1.5">
+                <span className="capitalize">
+                  {mission.difficulty} {mission.level}: {mission.attempts}
+                </span>
+
+                {mission.wonAt && <Check className="text-green-500" />}
               </div>
             ))}
           </div>
