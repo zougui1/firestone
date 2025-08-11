@@ -1,25 +1,34 @@
 'use client';
 
-import { isNumber } from 'radash';
+import { isNumber, sort } from 'radash';
 import { toast } from 'sonner';
 import { type PartialDeep } from 'type-fest';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { type db } from '@zougui/firestone.db';
 import { type Guardian } from '@zougui/firestone.types';
 
 import { Button, Input, Label, Select, Switch, Typography } from '~/components/ui';
+import { Card } from '~/components/ui/Card';
 import { useTRPC } from '~/trpc/react';
 
 import { BotFeatureConfig } from './BotFeatureConfig';
 import { useBotConfig, useUpdateBotConfig } from '../hooks';
-import { useMutation } from '@tanstack/react-query';
-import { Card } from '~/components/ui/Card';
+import { useLongPolling } from '~/hooks';
 
 const guardians: Record<Guardian, Guardian> = {
   Vermillion: 'Vermillion',
   Grace: 'Grace',
   Ankaa: 'Ankaa',
   Azhar: 'Azhar',
+};
+
+const difficultyOrder = {
+  easy: 0,
+  normal: 1,
+  hard: 2,
+  insane: 3,
+  nightmare: 4,
 };
 
 type Config = Omit<typeof db.config.schema, '_id'> & { _id: string; };
@@ -29,6 +38,9 @@ export const BotConfig = () => {
   const config = useBotConfig();
   const updateConfig = useUpdateBotConfig(config);
   const restartMutation = useMutation(trpc.bot.restart.mutationOptions());
+  const { data: lastMissions, refetch, isFetching } = useQuery(trpc.bot.findLastMissions.queryOptions());
+
+  useLongPolling(refetch, isFetching);
 
   if (!config.data || !config.serverData) {
     return (
@@ -136,18 +148,6 @@ export const BotConfig = () => {
 
       <div className="flex w-full flex-wrap justify-center gap-4">
         <BotFeatureConfig
-          label="Engineer Tools"
-          enabled={config.data.features.engineerTools.enabled}
-          onEnabledChange={toggleFeature('engineerTools')}
-        />
-
-        <BotFeatureConfig
-          label="Campaign Loot"
-          enabled={config.data.features.campaignLoot.enabled}
-          onEnabledChange={toggleFeature('campaignLoot')}
-        />
-
-        <BotFeatureConfig
           label="Campaign Missions"
           enabled={config.data.features.campaignMission.enabled}
           onEnabledChange={toggleFeature('campaignMission')}
@@ -159,75 +159,15 @@ export const BotConfig = () => {
               onChange={handleNumberChange(value => ({ features: { campaignMission: { battleCooldownSeconds: value } } }))}
             />
           </Label>
+
+          <div>
+            {sort(lastMissions ?? [], m => difficultyOrder[m.difficulty]).map(mission => (
+              <div key={mission.difficulty} className="capitalize">
+                {mission.difficulty} {mission.level}: {mission.attempts}
+              </div>
+            ))}
+          </div>
         </BotFeatureConfig>
-
-        <BotFeatureConfig
-          label="Guardian Training"
-          enabled={config.data.features.guardianTraining.enabled}
-          onEnabledChange={toggleFeature('guardianTraining')}
-          className="items-end"
-        >
-          <Label className="inline-flex flex-col items-start">
-            Guardian
-
-            <Select.Root
-              value={config.data.features.guardianTraining.guardian}
-              onValueChange={(guardian: Guardian | 'auto') => updateConfig({ features: { guardianTraining: { guardian } } })}
-            >
-              <Select.Trigger>
-                <Select.Value />
-              </Select.Trigger>
-
-              <Select.Content>
-                <Select.Item value="auto">Auto</Select.Item>
-                <Select.Item value={guardians.Vermillion}>{guardians.Vermillion}</Select.Item>
-                <Select.Item value={guardians.Grace}>{guardians.Grace}</Select.Item>
-                <Select.Item value={guardians.Ankaa}>{guardians.Ankaa}</Select.Item>
-                <Select.Item value={guardians.Azhar}>{guardians.Azhar}</Select.Item>
-              </Select.Content>
-            </Select.Root>
-          </Label>
-
-          <Label className="md:w-2/5 inline-flex flex-col items-start">
-            Cooldown (hours)
-            <Input
-              defaultValue={config.data.features.guardianTraining.cooldownSeconds / 60 / 60}
-              onChange={handleNumberChange(value => ({ features: { guardianTraining: { cooldownSeconds: value * 60 * 60 } } }))}
-            />
-          </Label>
-        </BotFeatureConfig>
-
-        <BotFeatureConfig
-          label="Firestone Research"
-          enabled={config.data.features.firestoneResearch.enabled}
-          onEnabledChange={toggleFeature('firestoneResearch')}
-        >
-          <Label className="inline-flex flex-col items-start">
-            Tree Level
-            <Input
-              defaultValue={config.data.features.firestoneResearch.treeLevel}
-              onChange={handleNumberChange(treeLevel => ({ features: { firestoneResearch: { treeLevel } } }))}
-            />
-          </Label>
-        </BotFeatureConfig>
-
-        <BotFeatureConfig
-          label="Guild Expeditions"
-          enabled={config.data.features.guildExpedition.enabled}
-          onEnabledChange={toggleFeature('guildExpedition')}
-        />
-
-        <BotFeatureConfig
-          label="Oracle Rituals"
-          enabled={config.data.features.oracleRitual.enabled}
-          onEnabledChange={toggleFeature('oracleRitual')}
-        />
-
-        <BotFeatureConfig
-          label="Pickaxes"
-          enabled={config.data.features.pickaxesClaiming.enabled}
-          onEnabledChange={toggleFeature('pickaxesClaiming')}
-        />
 
         <BotFeatureConfig
           label="Alchemy Experiments"
@@ -279,6 +219,86 @@ export const BotConfig = () => {
             </Label>
           </div>
         </BotFeatureConfig>
+
+        <BotFeatureConfig
+          label="Firestone Research"
+          enabled={config.data.features.firestoneResearch.enabled}
+          onEnabledChange={toggleFeature('firestoneResearch')}
+        >
+          <Label className="inline-flex flex-col items-start">
+            Tree Level
+            <Input
+              defaultValue={config.data.features.firestoneResearch.treeLevel}
+              onChange={handleNumberChange(treeLevel => ({ features: { firestoneResearch: { treeLevel } } }))}
+            />
+          </Label>
+        </BotFeatureConfig>
+
+        <BotFeatureConfig
+          label="Guardian Training"
+          enabled={config.data.features.guardianTraining.enabled}
+          onEnabledChange={toggleFeature('guardianTraining')}
+          className="items-end"
+        >
+          <Label className="inline-flex flex-col items-start">
+            Guardian
+
+            <Select.Root
+              value={config.data.features.guardianTraining.guardian}
+              onValueChange={(guardian: Guardian | 'auto') => updateConfig({ features: { guardianTraining: { guardian } } })}
+            >
+              <Select.Trigger>
+                <Select.Value />
+              </Select.Trigger>
+
+              <Select.Content>
+                <Select.Item value="auto">Auto</Select.Item>
+                <Select.Item value={guardians.Vermillion}>{guardians.Vermillion}</Select.Item>
+                <Select.Item value={guardians.Grace}>{guardians.Grace}</Select.Item>
+                <Select.Item value={guardians.Ankaa}>{guardians.Ankaa}</Select.Item>
+                <Select.Item value={guardians.Azhar}>{guardians.Azhar}</Select.Item>
+              </Select.Content>
+            </Select.Root>
+          </Label>
+
+          <Label className="md:w-2/5 inline-flex flex-col items-start">
+            Cooldown (hours)
+            <Input
+              defaultValue={config.data.features.guardianTraining.cooldownSeconds / 60 / 60}
+              onChange={handleNumberChange(value => ({ features: { guardianTraining: { cooldownSeconds: value * 60 * 60 } } }))}
+            />
+          </Label>
+        </BotFeatureConfig>
+
+        <BotFeatureConfig
+          label="Engineer Tools"
+          enabled={config.data.features.engineerTools.enabled}
+          onEnabledChange={toggleFeature('engineerTools')}
+        />
+
+        <BotFeatureConfig
+          label="Campaign Loot"
+          enabled={config.data.features.campaignLoot.enabled}
+          onEnabledChange={toggleFeature('campaignLoot')}
+        />
+
+        <BotFeatureConfig
+          label="Guild Expeditions"
+          enabled={config.data.features.guildExpedition.enabled}
+          onEnabledChange={toggleFeature('guildExpedition')}
+        />
+
+        <BotFeatureConfig
+          label="Oracle Rituals"
+          enabled={config.data.features.oracleRitual.enabled}
+          onEnabledChange={toggleFeature('oracleRitual')}
+        />
+
+        <BotFeatureConfig
+          label="Pickaxes"
+          enabled={config.data.features.pickaxesClaiming.enabled}
+          onEnabledChange={toggleFeature('pickaxesClaiming')}
+        />
 
         <BotFeatureConfig
           label="Map Missions"

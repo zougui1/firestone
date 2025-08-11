@@ -102,4 +102,25 @@ export const botRouter = createTRPCRouter({
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
     }
   }),
+
+  findLastMissions: publicProcedure.query(async () => {
+    return await db.campaignMission.aggregate([
+      {
+        $sort: { level: -1 },
+      },
+      {
+        $group: {
+          _id: "$difficulty",
+          mission: {
+            $first: "$$ROOT"
+          },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$mission"
+        },
+      },
+    ]);
+  }),
 });
