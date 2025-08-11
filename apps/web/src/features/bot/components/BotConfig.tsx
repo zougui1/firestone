@@ -146,7 +146,7 @@ export const BotConfig = () => {
         </Card.Root>
       </div>
 
-      <div className="flex w-full flex-wrap justify-center gap-4">
+      <div className="w-full flex flex-wrap justify-center gap-4">
         <BotFeatureConfig
           label="Campaign Missions"
           enabled={config.data.features.campaignMission.enabled}

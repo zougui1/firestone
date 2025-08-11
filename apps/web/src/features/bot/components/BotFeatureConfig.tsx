@@ -5,8 +5,8 @@ import { Card } from '~/components/ui/Card';
 
 export const BotFeatureConfig = ({ label, enabled, onEnabledChange, children, className }: BotFeatureConfigProps) => {
   return (
-    <Card.Root className="w-5/12">
-      <Card.Header className="flex flex-col sm:flex-row sm:items-center gap-2">
+    <Card.Root className="w-full sm:w-2/3 md:w-5/12">
+      <Card.Header className="flex items-center gap-2">
         <Switch
           checked={enabled}
           onCheckedChange={onEnabledChange}
