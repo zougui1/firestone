@@ -61,7 +61,7 @@ export const HeroesTable = ({ className }: HeroesTableProps) => {
     <DataTable
       columns={columns}
       data={heroes}
-      className={cn('[&_td]:p-1', className)}
+      className={cn('[&_td]:p-1 max-h-[500px] overflow-y-auto', className)}
     />
   );
 }
