@@ -14,6 +14,7 @@ export const env = createEnv({
   server: {
     WAR_MACHINES_APP_PORT: z.coerce.number().positive().int(),
     WAR_MACHINES_APP_DOMAIN: z.string(),
+    WAR_MACHINES_APP_URL: z.url().optional(),
     BOT_SERVICE_NAME: z.string(),
   },
 
@@ -31,6 +32,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     WAR_MACHINES_APP_PORT: process.env.WAR_MACHINES_APP_PORT,
     WAR_MACHINES_APP_DOMAIN: process.env.WAR_MACHINES_APP_DOMAIN,
+    WAR_MACHINES_APP_URL: process.env.WAR_MACHINES_APP_URL,
     BOT_SERVICE_NAME: process.env.BOT_SERVICE_NAME,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,

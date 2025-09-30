@@ -52,6 +52,7 @@
     "PORT",
     "WAR_MACHINES_APP_PORT",
     "WAR_MACHINES_APP_DOMAIN",
+    "WAR_MACHINES_APP_URL",
     "BOT_SERVICE_NAME"
   ],
   "globalPassThroughEnv": [
