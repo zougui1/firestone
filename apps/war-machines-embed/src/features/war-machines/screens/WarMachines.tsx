@@ -1,16 +1,23 @@
-import { Accordion, Typography, Separator, Button } from '~/components/ui';
+import { Separator, Button } from '~/components/ui';
 
-import { WarMachinesTable } from '../components/WarMachinesTable';
 import { HeroesTable } from '../components/HeroesTable';
 import { ArtifactTypesTable } from '../components/ArtifactTypesTable';
 import { WarMachinesResult } from '../components/WarMachinesResult';
 import { ImportDialog } from '../components/ImportDialog';
 import { ExportDialog } from '../components/ExportDialog';
 import { TargetCampaign } from '../components/TargetCampaign';
+import { Tabs } from "~/components/ui/Tabs";
+import { WarMachinesList } from "../components/WarMachinesList";
+
+const tabs = {
+  warMachines: 'warMachines',
+  heroes: 'heroes',
+  artifacts: 'artifacts',
+}
 
 export const WarMachines = () => {
   return (
-    <div className="container mx-auto py-8 space-y-2">
+    <div className="container mx-auto py-8 space-y-4">
       <div className="flex justify-end space-x-2">
         <ImportDialog>
           <Button>Import</Button>
@@ -21,39 +28,25 @@ export const WarMachines = () => {
         </ExportDialog>
       </div>
 
-      <div className="space-y-8">
-        <Accordion.Root type="multiple">
-          <Accordion.Item value="warMachines">
-            <Accordion.Trigger>
-              <Typography.H4>War Machines</Typography.H4>
-            </Accordion.Trigger>
+      <Tabs.Root defaultValue={tabs.warMachines}>
+        <Tabs.List>
+          <Tabs.Trigger value={tabs.warMachines}>War Machines</Tabs.Trigger>
+          <Tabs.Trigger value={tabs.heroes}>Heroes</Tabs.Trigger>
+          <Tabs.Trigger value={tabs.artifacts}>Artifacts</Tabs.Trigger>
+        </Tabs.List>
 
-            <Accordion.Content>
-              <WarMachinesTable className="max-w-4xl" />
-            </Accordion.Content>
-          </Accordion.Item>
+        <Tabs.Content value={tabs.warMachines}>
+          <WarMachinesList />
+        </Tabs.Content>
 
-          <Accordion.Item value="heroes">
-            <Accordion.Trigger>
-              <Typography.H4>Heroes</Typography.H4>
-            </Accordion.Trigger>
+        <Tabs.Content value={tabs.heroes}>
+          <HeroesTable />
+        </Tabs.Content>
 
-            <Accordion.Content>
-              <HeroesTable className="max-w-md" />
-            </Accordion.Content>
-          </Accordion.Item>
-
-          <Accordion.Item value="artifactTypes">
-            <Accordion.Trigger>
-              <Typography.H4>Artifact Types</Typography.H4>
-            </Accordion.Trigger>
-
-            <Accordion.Content>
-              <ArtifactTypesTable className="max-w-5xl" />
-            </Accordion.Content>
-          </Accordion.Item>
-        </Accordion.Root>
-      </div>
+        <Tabs.Content value={tabs.artifacts}>
+          <ArtifactTypesTable />
+        </Tabs.Content>
+      </Tabs.Root>
 
       <div>
         <WarMachinesResult />

@@ -1,6 +1,7 @@
 export * from './Accordion';
 export * from './AlertDialog';
 export * from './Autocomplete';
+export * from './Badge';
 export * from './Button';
 export * from './Command';
 export * from './ConfirmDeletionDialog';
@@ -9,6 +10,7 @@ export * from './DataTable';
 export * from './Dialog';
 export * from './Dropdown';
 export * from './Form';
+export * from './HoverCard';
 export * from './Input';
 export * from './Label';
 export * from './Progress';
