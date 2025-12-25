@@ -35,7 +35,12 @@ export const ExportDialog = ({ children }: ExportDialogProps) => {
 
         <form.AppField
           name="data"
-          children={field => <field.Textarea label="Data" classes={{ textarea: 'h-48' }} readOnly />}
+          children={field => <field.Textarea
+            label="Data"
+            classes={{ textarea: 'h-48' }}
+            readOnly
+            ref={e => e?.select()}
+          />}
         />
 
         <Dialog.Footer>

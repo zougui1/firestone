@@ -1,13 +1,13 @@
 import { useId } from 'react';
 
-import { Textarea } from '../../Textarea';
+import { Textarea, type TextareaProps } from '../../Textarea';
 
 import { useFieldContext } from '../context';
 import { FormLabel } from '../common/FormLabel';
 import { FormDescription } from '../common/FormDescription';
 import { FormMessage } from '../common/FormMessage';
 
-export default function FormTextarea({ label, description, classes, readOnly }: FormTextareaProps) {
+export default function FormTextarea({ label, description, classes, readOnly, ...props }: FormTextareaProps) {
   const field = useFieldContext<string>();
   const inputId = useId();
   const descriptionId = useId();
@@ -33,6 +33,7 @@ export default function FormTextarea({ label, description, classes, readOnly }: 
       <FormLabel htmlFor={inputId}>{label}</FormLabel>
 
       <Textarea
+        {...props}
         id={inputId}
         value={field.state.value}
         onChange={e => field.handleChange(e.target.value)}
@@ -53,7 +54,7 @@ export default function FormTextarea({ label, description, classes, readOnly }: 
   );
 }
 
-export interface FormTextareaProps {
+export interface FormTextareaProps extends TextareaProps {
   label: React.ReactNode;
   description?: React.ReactNode;
   classes?: {
