@@ -3,7 +3,7 @@ import { sort } from 'radash';
 import { cva } from "class-variance-authority"
 import { MinusIcon, PlusIcon } from 'lucide-react';
 
-import { warMachineRarityData, type WarMachineRarity } from "@zougui/firestone.war-machines";
+import { warMachineRarityData } from "@zougui/firestone.war-machines";
 
 import { Badge, Button, HoverCard, Input, Select } from "~/components/ui";
 
