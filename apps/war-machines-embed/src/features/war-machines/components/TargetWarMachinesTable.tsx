@@ -512,6 +512,8 @@ export const TargetWarMachinesTable = () => {
     isEqual,
   );
 
+  const { data, isLoading } = useCampaignSimulation();
+
   const enrichedWarMachines = warMachineList.map((warMachine) => {
     const resources = calculateResources(
       warMachine.current.level ?? 0,
@@ -534,8 +536,36 @@ export const TargetWarMachinesTable = () => {
     const totalBlueprints =
       damageBlueprints + healthBlueprints + armorBlueprints;
 
+    const getEta = () => {
+      const totalCampaignStarsPossible =
+        data && !isLoading ? getTotalStars(data) : 0;
+
+      if (totalCampaignStarsPossible <= 0) return 0;
+
+      const requiredResources = calculateResources(
+        warMachine.current.level ?? 0,
+        warMachine.target.level ?? 0,
+      );
+
+      return estimateTimeForUpgrade({
+        stars: totalCampaignStarsPossible,
+        emblems: 0,
+        ownedResources: {
+          screws: 0,
+          cogs: 0,
+          metal: 0,
+          expeditionTokens: 0,
+        },
+        requiredResources: {
+          ...requiredResources,
+          expeditionTokens: 0,
+        },
+      });
+    };
+
     return {
       ...warMachine,
+      eta: getEta(),
       resources: {
         ...resources,
         blueprints: totalBlueprints,
@@ -543,6 +573,7 @@ export const TargetWarMachinesTable = () => {
     };
   });
 
+  const maxEta = Math.max(0, ...enrichedWarMachines.map((w) => w.eta));
   const maxScrews = Math.max(
     0,
     ...enrichedWarMachines.map((w) => w.resources.screws),
@@ -567,6 +598,9 @@ export const TargetWarMachinesTable = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-center gap-6 md:justify-start">
+        <div className="flex items-center gap-2">
+          {maxEta} {maxEta === 1 ? 'day' : 'days'}
+        </div>
         <div className="flex items-center gap-2">
           <img className="size-6" src="/Component_Screw.webp" alt="screw" />
           {numberFormatter.format(maxScrews)}
@@ -604,11 +638,19 @@ export const TargetWarMachinesTable = () => {
               key={warMachine.name}
               className="flex flex-col items-center border p-4"
             >
-              <img
-                className="max-w-24 min-w-24 p-2"
-                src={`/war-machines/${warMachine.name}.webp`}
-                alt={warMachine.name}
-              />
+              <div className="relative flex w-full items-center justify-center">
+                <img
+                  className="max-w-24 min-w-24 p-2"
+                  src={`/war-machines/${warMachine.name}.webp`}
+                  alt={warMachine.name}
+                />
+
+                {warMachine.eta > 0 && (
+                  <div className="absolute top-0 right-0 text-shadow-sm">
+                    {warMachine.eta} {warMachine.eta === 1 ? 'day' : 'days'}
+                  </div>
+                )}
+              </div>
 
               <div className="flex h-full w-full flex-col items-center justify-between gap-4">
                 <div className="grid">
