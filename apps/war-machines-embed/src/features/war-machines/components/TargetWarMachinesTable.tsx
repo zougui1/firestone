@@ -14,7 +14,7 @@ import {
 } from '@zougui/firestone.war-machines';
 import { getTotalStars } from '@zougui/firestone.war-machines/campaign';
 
-import { DataTable, Separator } from '~/components/ui';
+import { DataTable } from '~/components/ui';
 import { gameDataStore } from '../gameData';
 import { useCampaignSimulation } from '../hooks';
 import { targetCampaignStore } from '../targetCampaignStore';
