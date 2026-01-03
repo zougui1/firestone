@@ -19,25 +19,28 @@ import { gameDataStore } from '../gameData';
 import { useCampaignSimulation } from '../hooks';
 import { targetCampaignStore } from '../targetCampaignStore';
 
-const rarityVariants = cva('size-6 rounded', {
-  variants: {
-    rarity: {
-      locked: 'bg-rarity-locked opacity-40',
-      common: 'bg-rarity-common',
-      uncommon: 'bg-rarity-uncommon',
-      rare: 'bg-rarity-rare',
-      epic: 'bg-rarity-epic',
-      legendary: 'bg-rarity-legendary',
-      mythic: 'bg-rarity-mythic',
-      titan: 'bg-rarity-titan',
-      angel: 'bg-rarity-angel',
+const rarityVariants = cva(
+  'flex size-6 items-center justify-center rounded font-bold',
+  {
+    variants: {
+      rarity: {
+        locked: 'bg-rarity-locked text-white opacity-40',
+        common: 'bg-rarity-common text-white',
+        uncommon: 'bg-rarity-uncommon text-white',
+        rare: 'bg-rarity-rare text-white',
+        epic: 'bg-rarity-epic text-white',
+        legendary: 'bg-rarity-legendary text-white',
+        mythic: 'bg-rarity-mythic text-black',
+        titan: 'bg-rarity-titan text-black',
+        angel: 'bg-rarity-angel text-white',
+      },
+    },
+
+    defaultVariants: {
+      rarity: 'common',
     },
   },
-
-  defaultVariants: {
-    rarity: 'common',
-  },
-});
+);
 
 const numberFormatter = new Intl.NumberFormat('en-US');
 
@@ -643,13 +646,19 @@ export const TargetWarMachinesTable = () => {
                       warMachineRarityData[warMachine.target.rarity ?? 0]
                         .rarityLevel
                     }
-                    renderValue={(level) => (
-                      <div
-                        className={rarityVariants({
-                          rarity: warMachineRarityLevelsToName[level],
-                        })}
-                      />
-                    )}
+                    renderValue={(level) => {
+                      const rarity = warMachineRarityLevelsToName[level];
+
+                      return (
+                        <div
+                          className={rarityVariants({
+                            rarity,
+                          })}
+                        >
+                          {rarity[0].toUpperCase()}
+                        </div>
+                      );
+                    }}
                   />
                 </div>
 

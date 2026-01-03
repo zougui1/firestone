@@ -46,14 +46,23 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --color-rarity-locked: var(--color-gray-500);
+  --color-rarity-locked-foreground: var(--color-white);
   --color-rarity-common: var(--color-yellow-900);
+  --color-rarity-common-foreground: var(--color-white);
   --color-rarity-uncommon: var(--color-green-700);
+  --color-rarity-uncommon-foreground: var(--color-white);
   --color-rarity-rare: var(--color-blue-800);
+  --color-rarity-rare-foreground: var(--color-white);
   --color-rarity-epic: var(--color-purple-800);
+  --color-rarity-epic-foreground: var(--color-white);
   --color-rarity-legendary: var(--color-orange-700);
+  --color-rarity-legendary-foreground: var(--color-white);
   --color-rarity-mythic: var(--color-cyan-500);
+  --color-rarity-mythic-foreground: var(--color-black);
   --color-rarity-titan: var(--color-yellow-500);
+  --color-rarity-titan-foreground: var(--color-black);
   --color-rarity-angel: var(--color-red-600);
+  --color-rarity-angel-foreground: var(--color-white);
 }
 
 :root {

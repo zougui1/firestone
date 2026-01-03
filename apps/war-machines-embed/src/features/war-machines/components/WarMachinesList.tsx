@@ -15,15 +15,15 @@ const rarityVariants = cva(
   {
     variants: {
       rarity: {
-        locked: 'bg-rarity-locked opacity-40',
-        common: 'bg-rarity-common',
-        uncommon: 'bg-rarity-uncommon',
-        rare: 'bg-rarity-rare',
-        epic: 'bg-rarity-epic',
-        legendary: 'bg-rarity-legendary',
-        mythic: 'bg-rarity-mythic',
-        titan: 'bg-rarity-titan',
-        angel: 'bg-rarity-angel',
+        locked: 'bg-rarity-locked text-white opacity-40',
+        common: 'bg-rarity-common text-white',
+        uncommon: 'bg-rarity-uncommon text-white',
+        rare: 'bg-rarity-rare text-white',
+        epic: 'bg-rarity-epic text-white',
+        legendary: 'bg-rarity-legendary text-white',
+        mythic: 'bg-rarity-mythic text-black',
+        titan: 'bg-rarity-titan text-black',
+        angel: 'bg-rarity-angel text-white',
       },
     },
 
@@ -72,6 +72,8 @@ const LevelBadge = ({ icon, value, onValueChange }: LevelBadgeProps) => {
             className="w-[10ch] min-w-0"
             value={value}
             onChange={(e) => onValueChange(Number(e.currentTarget.value))}
+            autoFocus
+            onFocus={(e) => e.currentTarget.select()}
           />
         </div>
       </HoverCard.Content>
