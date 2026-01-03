@@ -1,23 +1,22 @@
-import { Separator, Button } from '~/components/ui';
-
-import { HeroesTable } from '../components/HeroesTable';
+import { Button, Separator } from '~/components/ui';
+import { Tabs } from '~/components/ui/Tabs';
 import { ArtifactTypesTable } from '../components/ArtifactTypesTable';
-import { WarMachinesResult } from '../components/WarMachinesResult';
-import { ImportDialog } from '../components/ImportDialog';
 import { ExportDialog } from '../components/ExportDialog';
+import { HeroesTable } from '../components/HeroesTable';
+import { ImportDialog } from '../components/ImportDialog';
 import { TargetCampaign } from '../components/TargetCampaign';
-import { Tabs } from "~/components/ui/Tabs";
-import { WarMachinesList } from "../components/WarMachinesList";
+import { WarMachinesList } from '../components/WarMachinesList';
+import { WarMachinesResult } from '../components/WarMachinesResult';
 
 const tabs = {
   warMachines: 'warMachines',
   heroes: 'heroes',
   artifacts: 'artifacts',
-}
+};
 
 export const WarMachines = () => {
   return (
-    <div className="container mx-auto py-8 space-y-4">
+    <div className="container mx-auto space-y-4 px-2 pt-8 pb-4 md:px-0">
       <div className="flex justify-end space-x-2">
         <ImportDialog>
           <Button>Import</Button>
@@ -61,4 +60,4 @@ export const WarMachines = () => {
       </div>
     </div>
   );
-}
+};

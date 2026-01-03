@@ -1,42 +1,65 @@
-import { min, max, sort } from 'radash';
+import { max, min, sort } from 'radash';
+
+import type {
+  ComputedWarMachine,
+  DetailedCampaignResult,
+  MissionResult,
+  MissionSummary,
+} from '@zougui/firestone.war-machines/campaign';
+import {
+  warMachineBaseData,
+  warMachineRarityData,
+  warMachineRarityLevelsToName,
+} from '@zougui/firestone.war-machines';
+import { simulateCampaignSummary } from '@zougui/firestone.war-machines/campaign';
 
 import { average } from '~/utils';
-
-import { warMachineBaseData, warMachineRarityData, warMachineRarityLevelsToName } from '@zougui/firestone.war-machines';
-import {
-  simulateCampaignSummary,
-  type ComputedWarMachine,
-  type DetailedCampaignResult,
-  type MissionResult,
-  type MissionSummary,
-} from '@zougui/firestone.war-machines/campaign';
-
-import { invokeComputeBestFormation } from '../invokers/invokeComputeBestFormation';
-import { simulateDetailedCampaign } from '../hooks';
 import { type GameData } from '../gameData';
+import { simulateDetailedCampaign } from '../hooks';
+import { invokeComputeBestFormation } from '../invokers/invokeComputeBestFormation';
 
 const totalSimulations = 250;
 
 const orderFromStrongestToWeakeast = (warMachines: ComputedWarMachine[]) => {
-  return sort(warMachines, warMachine => warMachine.health + warMachine.armor * 10 + warMachine.damage * 10, true);
-}
+  return sort(
+    warMachines,
+    (warMachine) =>
+      warMachine.health + warMachine.armor * 10 + warMachine.damage * 10,
+    true,
+  );
+};
 
 interface WarMachineMetadata {
   isMain: boolean;
 }
 
-export const findTargetStarFormation = async (data: GameData, targetStar: TargetStar, options?: FindTargetStarFormationOptions) => {
+export const findTargetStarFormation = async (
+  data: GameData,
+  targetStar: TargetStar,
+  options?: FindTargetStarFormationOptions,
+) => {
   data = structuredClone(data);
   let successChance = 100;
   let needsAbilities = false;
 
-  const currentWarMachines = Object.values(data.warMachines).filter(wm => wm.level);
+  const currentWarMachines = Object.values(data.warMachines).filter(
+    (wm) => wm.level,
+  );
   const currentBestCrew = await invokeComputeBestFormation(data, options);
-  let team = orderFromStrongestToWeakeast(Object.values(currentBestCrew.warMachines)).map(wm => wm.name);
-  const currentWarMachinesInTeam = currentWarMachines.filter(wm => team.includes(wm.name));
-  const warMachineInTeamLevels = currentWarMachinesInTeam.map(wm => wm.level ?? 0);
+  let team = orderFromStrongestToWeakeast(
+    Object.values(currentBestCrew.warMachines),
+  ).map((wm) => wm.name);
+  const currentWarMachinesInTeam = currentWarMachines.filter((wm) =>
+    team.includes(wm.name),
+  );
+  const warMachineInTeamLevels = currentWarMachinesInTeam.map(
+    (wm) => wm.level ?? 0,
+  );
 
-  const highestWarMachineLevelWarMachine = max(currentWarMachinesInTeam, wm => wm.level ?? 0);
+  const highestWarMachineLevelWarMachine = max(
+    currentWarMachinesInTeam,
+    (wm) => wm.level ?? 0,
+  );
   const averageWarMachineLevel = average(warMachineInTeamLevels);
 
   const rarityUpgrades: string[] = [];
@@ -55,11 +78,16 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     for (const warMachine of currentWarMachinesInTeam) {
       const metadata = warMachinesMetadata[warMachine.name];
 
-      if (!metadata || !warMachine.level || highestWarMachineLevelWarMachine.level <= warMachine.level) {
+      if (
+        !metadata ||
+        !warMachine.level ||
+        highestWarMachineLevelWarMachine.level <= warMachine.level
+      ) {
         continue;
       }
 
-      const currentRarityLevel = warMachineRarityData[warMachine.rarity].rarityLevel;
+      const currentRarityLevel =
+        warMachineRarityData[warMachine.rarity].rarityLevel;
       const nexRarity = warMachineRarityLevelsToName[currentRarityLevel + 1];
 
       if (nexRarity) {
@@ -71,29 +99,47 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
         }
 
         if (warMachine.rarity === 'common') {
-          const highestRequiredLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].availableLevel;
-          const highestRarityLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].rarityLevel;
-          const highestNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 1];
+          const highestRequiredLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .availableLevel;
+          const highestRarityLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .rarityLevel;
+          const highestNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 1];
 
           if (highestNextRarity) {
-            const highestNextRequiredLevel = warMachineRarityData[highestNextRarity].availableLevel;
+            const highestNextRequiredLevel =
+              warMachineRarityData[highestNextRarity].availableLevel;
             const difference = highestNextRequiredLevel - highestRequiredLevel;
 
-            if (highestWarMachineLevelWarMachine.level >= (highestRequiredLevel + difference / 2)) {
+            if (
+              highestWarMachineLevelWarMachine.level >=
+              highestRequiredLevel + difference / 2
+            ) {
               rarityUpgrades.push(warMachine.name);
             }
           }
         } else {
-          const highestRarityLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].rarityLevel;
-          const highestNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 1];
-          const highestNextNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 2];
+          const highestRarityLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .rarityLevel;
+          const highestNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 1];
+          const highestNextNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 2];
 
           if (highestNextRarity && highestNextNextRarity) {
-            const highestRequiredLevel = warMachineRarityData[highestNextRarity].availableLevel;
-            const highestNextRequiredLevel = warMachineRarityData[highestNextNextRarity].availableLevel;
+            const highestRequiredLevel =
+              warMachineRarityData[highestNextRarity].availableLevel;
+            const highestNextRequiredLevel =
+              warMachineRarityData[highestNextNextRarity].availableLevel;
             const difference = highestNextRequiredLevel - highestRequiredLevel;
 
-            if (highestWarMachineLevelWarMachine.level >= (highestRequiredLevel + difference / 2)) {
+            if (
+              highestWarMachineLevelWarMachine.level >=
+              highestRequiredLevel + difference / 2
+            ) {
               rarityUpgrades.push(warMachine.name);
             }
           }
@@ -108,11 +154,16 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
 
       const metadata = warMachinesMetadata[warMachine.name];
 
-      if (!metadata || !warMachine.level || highestWarMachineLevelWarMachine.level <= warMachine.level) {
+      if (
+        !metadata ||
+        !warMachine.level ||
+        highestWarMachineLevelWarMachine.level <= warMachine.level
+      ) {
         continue;
       }
 
-      const currentRarityLevel = warMachineRarityData[warMachine.rarity].rarityLevel;
+      const currentRarityLevel =
+        warMachineRarityData[warMachine.rarity].rarityLevel;
       const nexRarity = warMachineRarityLevelsToName[currentRarityLevel + 1];
 
       if (nexRarity) {
@@ -124,29 +175,47 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
         }
 
         if (warMachine.rarity === 'common') {
-          const highestRequiredLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].availableLevel;
-          const highestRarityLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].rarityLevel;
-          const highestNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 1];
+          const highestRequiredLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .availableLevel;
+          const highestRarityLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .rarityLevel;
+          const highestNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 1];
 
           if (highestNextRarity) {
-            const highestNextRequiredLevel = warMachineRarityData[highestNextRarity].availableLevel;
+            const highestNextRequiredLevel =
+              warMachineRarityData[highestNextRarity].availableLevel;
             const difference = highestNextRequiredLevel - highestRequiredLevel;
 
-            if (highestWarMachineLevelWarMachine.level >= (highestRequiredLevel + difference / 2)) {
+            if (
+              highestWarMachineLevelWarMachine.level >=
+              highestRequiredLevel + difference / 2
+            ) {
               rarityUpgrades.push(warMachine.name);
             }
           }
         } else {
-          const highestRarityLevel = warMachineRarityData[highestWarMachineLevelWarMachine.rarity].rarityLevel;
-          const highestNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 1];
-          const highestNextNextRarity = warMachineRarityLevelsToName[highestRarityLevel + 2];
+          const highestRarityLevel =
+            warMachineRarityData[highestWarMachineLevelWarMachine.rarity]
+              .rarityLevel;
+          const highestNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 1];
+          const highestNextNextRarity =
+            warMachineRarityLevelsToName[highestRarityLevel + 2];
 
           if (highestNextRarity && highestNextNextRarity) {
-            const highestRequiredLevel = warMachineRarityData[highestNextRarity].availableLevel;
-            const highestNextRequiredLevel = warMachineRarityData[highestNextNextRarity].availableLevel;
+            const highestRequiredLevel =
+              warMachineRarityData[highestNextRarity].availableLevel;
+            const highestNextRequiredLevel =
+              warMachineRarityData[highestNextNextRarity].availableLevel;
             const difference = highestNextRequiredLevel - highestRequiredLevel;
 
-            if (highestWarMachineLevelWarMachine.level >= (highestRequiredLevel + difference / 2)) {
+            if (
+              highestWarMachineLevelWarMachine.level >=
+              highestRequiredLevel + difference / 2
+            ) {
               rarityUpgrades.push(warMachine.name);
             }
           }
@@ -155,16 +224,19 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     }
   }
 
-  team = team.filter(wm => warMachinesMetadata[wm]?.isMain);
+  team = team.filter((wm) => warMachinesMetadata[wm]?.isMain);
 
   for (const warMachineName of rarityUpgrades) {
-    const warMachine = currentWarMachines.find(wm => wm.name === warMachineName);
+    const warMachine = currentWarMachines.find(
+      (wm) => wm.name === warMachineName,
+    );
 
     if (!warMachine?.level) {
       continue;
     }
 
-    const currentRarityLevel = warMachineRarityData[warMachine.rarity].rarityLevel;
+    const currentRarityLevel =
+      warMachineRarityData[warMachine.rarity].rarityLevel;
     const nexRarity = warMachineRarityLevelsToName[currentRarityLevel + 1];
     const requiredLevel = warMachineRarityData[nexRarity].availableLevel;
 
@@ -182,7 +254,7 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
 
   const canBeatTargetStar = () => {
     return stars >= targetStar.starLevel;
-  }
+  };
 
   while (!canBeatTargetStar()) {
     if (options?.signal?.aborted) {
@@ -191,15 +263,22 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     }
 
     const computedData = await invokeComputeBestFormation(data, options);
-    const simulationWarMachines = computedData.warMachines.slice().reverse().map(wm => ({
-      ...wm,
-      maxHealth: wm.health,
-      abilityActivationChance: warMachineRarityData[wm.rarity].abilityActivationChance,
-    }));
-    const summary = simulateCampaignSummary({
-      warMachines: simulationWarMachines,
-      totalPower: computedData.campaignPower,
-    }, { ignoreRequirements: options?.ignoreRequirements });
+    const simulationWarMachines = computedData.warMachines
+      .slice()
+      .reverse()
+      .map((wm) => ({
+        ...wm,
+        maxHealth: wm.health,
+        abilityActivationChance:
+          warMachineRarityData[wm.rarity].abilityActivationChance,
+      }));
+    const summary = simulateCampaignSummary(
+      {
+        warMachines: simulationWarMachines,
+        totalPower: computedData.campaignPower,
+      },
+      { ignoreRequirements: options?.ignoreRequirements },
+    );
 
     const getDetails = (mission: MissionSummary): MissionResult => ({
       ...mission,
@@ -216,14 +295,15 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
       nightmare: summary.nightmare.map(getDetails),
     };
 
-    let missions = Object
-      .values(campaignResult)
+    let missions = Object.values(campaignResult)
       .flat()
-      .filter(mission => (
-        mission.status === 'win' ||
-        mission.status === 'can-win'
-      ));
-    missions = sort(missions, mission => mission.successChance, true).slice(0, targetStar.starLevel);
+      .filter(
+        (mission) => mission.status === 'win' || mission.status === 'can-win',
+      );
+    missions = sort(missions, (mission) => mission.successChance, true).slice(
+      0,
+      targetStar.starLevel,
+    );
     stars = missions.length;
 
     if (canBeatTargetStar()) {
@@ -233,12 +313,14 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
         }
 
         const missions = summary[data.mission.difficulty];
-        const missionIndex = missions?.findIndex(m => m.mission.level === data.mission.level);
+        const missionIndex = missions?.findIndex(
+          (m) => m.mission.level === data.mission.level,
+        );
 
         if (missionIndex !== undefined) {
           campaignResult[data.mission.difficulty][missionIndex] = data;
         }
-      }
+      };
 
       try {
         await simulateDetailedCampaign(summary, simulationWarMachines, {
@@ -247,22 +329,22 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
           totalSimulations,
         });
       } catch (error) {
-        console.error('campaign simulation error:', error)
+        console.error('campaign simulation error:', error);
       }
 
-      let missions = Object
-        .values(campaignResult)
+      let missions = Object.values(campaignResult)
         .flat()
-        .filter(mission => (
-          mission.successChance >= targetStar.minimumSuccessChance &&
-          (
-            mission.status === 'win' ||
-            mission.status === 'can-win'
-          )
-        ));
-      missions = sort(missions, mission => mission.successChance, true).slice(0, targetStar.starLevel);
+        .filter(
+          (mission) =>
+            mission.successChance >= targetStar.minimumSuccessChance &&
+            (mission.status === 'win' || mission.status === 'can-win'),
+        );
+      missions = sort(missions, (mission) => mission.successChance, true).slice(
+        0,
+        targetStar.starLevel,
+      );
       stars = missions.length;
-      const hardestMission = min(missions, mission => mission.successChance);
+      const hardestMission = min(missions, (mission) => mission.successChance);
 
       if (hardestMission && successChance > hardestMission.successChance) {
         successChance = hardestMission.successChance;
@@ -286,7 +368,8 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
       continue;
     }
 
-    const currentRarityLevel = warMachineRarityData[upgradeWarMachine.rarity].rarityLevel;
+    const currentRarityLevel =
+      warMachineRarityData[upgradeWarMachine.rarity].rarityLevel;
     const nexRarity = warMachineRarityLevelsToName[currentRarityLevel + 1];
 
     if (nexRarity && upgradeWarMachine.level) {
@@ -301,14 +384,21 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     upgradeWarMachine.level ??= 0;
     upgradeWarMachine.level++;
 
-    if (baseData.specialization === 'damage') {
-      upgradeWarMachine.damageBlueprintLevel = Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
+    if (
+      baseData.specialization === 'damage' &&
+      upgradeWarMachine.name === 'cloudfist'
+    ) {
+      upgradeWarMachine.damageBlueprintLevel =
+        Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
     }
 
     if (baseData.specialization === 'tank') {
-      upgradeWarMachine.damageBlueprintLevel = Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
-      upgradeWarMachine.healthBlueprintLevel = Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
-      upgradeWarMachine.armorBlueprintLevel = Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
+      upgradeWarMachine.damageBlueprintLevel =
+        Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
+      upgradeWarMachine.healthBlueprintLevel =
+        Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
+      upgradeWarMachine.armorBlueprintLevel =
+        Math.floor(upgradeWarMachine.level / 5) * 5 + 5;
     }
 
     // TODO do it up to a certain point where it's impossible to keep up upgrading the armor
@@ -320,7 +410,7 @@ export const findTargetStarFormation = async (data: GameData, targetStar: Target
     successChance,
     needsAbilities,
   };
-}
+};
 
 export interface TargetStar {
   starLevel: number;

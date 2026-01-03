@@ -1,14 +1,19 @@
 import { useSelector } from '@xstate/store/react';
 
-import { Typography, Input, Progress } from '~/components/ui';
-
-import { TargetWarMachinesTable } from './TargetWarMachinesTable';
+import { Input, Progress, Typography } from '~/components/ui';
 import { useTargetCampaignFormation } from '../hooks';
 import { targetCampaignStore } from '../targetCampaignStore';
+import { TargetWarMachinesTable } from './TargetWarMachinesTable';
 
 export const TargetCampaign = () => {
-  const targetStar = useSelector(targetCampaignStore, state => state.context.starLevel);
-  const minimumSuccessChance = useSelector(targetCampaignStore, state => state.context.minimumSuccessChance);
+  const targetStar = useSelector(
+    targetCampaignStore,
+    (state) => state.context.starLevel,
+  );
+  const minimumSuccessChance = useSelector(
+    targetCampaignStore,
+    (state) => state.context.minimumSuccessChance,
+  );
   const targetFormation = useTargetCampaignFormation();
 
   const getSuccessChanceMessage = () => {
@@ -24,11 +29,11 @@ export const TargetCampaign = () => {
     }
 
     return parts.join(' ');
-  }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-wrap items-center gap-4">
         <div>
           <Typography.H4>Target stars</Typography.H4>
         </div>
@@ -36,7 +41,12 @@ export const TargetCampaign = () => {
         <div>
           <Input
             value={targetStar}
-            onChange={e => targetCampaignStore.trigger.changeTargetStar({ starLevel: Number(e.currentTarget.value) })}
+            onChange={(e) =>
+              targetCampaignStore.trigger.changeTargetStar({
+                starLevel: Number(e.currentTarget.value),
+              })
+            }
+            className="max-w-[10ch]"
           />
         </div>
 
@@ -45,7 +55,11 @@ export const TargetCampaign = () => {
 
           <Input
             value={minimumSuccessChance}
-            onChange={e => targetCampaignStore.trigger.changeMinimumSuccessChance({ minimumSuccessChance: Number(e.currentTarget.value) })}
+            onChange={(e) =>
+              targetCampaignStore.trigger.changeMinimumSuccessChance({
+                minimumSuccessChance: Number(e.currentTarget.value),
+              })
+            }
             className="max-w-[8ch]"
           />
         </div>
@@ -63,4 +77,4 @@ export const TargetCampaign = () => {
       </div>
     </div>
   );
-}
+};
