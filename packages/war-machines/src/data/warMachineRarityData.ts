@@ -29,17 +29,17 @@ export const warMachineRarityData: Record<WarMachineRarity, WarMachineData> = {
   mythic: {
     rarityLevel: 5,
     abilityActivationChance: 40,
-    availableLevel: 200,
+    availableLevel: 230,
   },
   titan: {
     rarityLevel: 6,
     abilityActivationChance: 43,
-    availableLevel: 250,
+    availableLevel: 300,
   },
   angel: {
     rarityLevel: 7,
     abilityActivationChance: 46,
-    availableLevel: 300,
+    availableLevel: 400,
   },
 };
 
