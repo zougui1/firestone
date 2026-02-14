@@ -8,7 +8,8 @@
     "serve": "vite preview",
     "dev": "pnpm with-env vite dev",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "start": "pnpx srvx --prod -s ../client dist/server/server.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
