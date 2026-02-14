@@ -9,7 +9,7 @@
     "dev": "tsup src/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "start": "pnpm with-env node dist/index.js",
+    "start": "pnpm with-env node dist/index.mjs",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env -e .env --"
   },
