@@ -1,11 +1,13 @@
-import { ObjectId } from 'mongodb';
+import { env } from "@zougui/firestone.env/server";
 
-import { client, papr } from './client';
-import * as models from './models';
+import { client, papr } from "./client";
 
-export const db = {
-  ...models,
-  client,
-  papr,
-  ObjectId,
-};
+(async () => {
+  await client.connect();
+  papr.initialize(client.db(env.DATABASE_NAME));
+  await papr.updateSchemas();
+})().catch((error) => {
+  console.error("DATABASE CONNECTION ERROR:", error);
+});
+
+export * as db from "./exports";

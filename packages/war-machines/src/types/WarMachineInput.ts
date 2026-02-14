@@ -1,4 +1,4 @@
-import type { WarMachineRarity } from './WarMachineRarity';
+import type { WarMachineRarity } from "../data";
 
 export interface WarMachineInput {
   name: string;

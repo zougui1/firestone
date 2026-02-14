@@ -1,7 +1,11 @@
-import type * as database from './bot/database';
+import type * as database from './database';
 
 export const defaultConfig: database.config.ConfigType = {
-  sessionId: '',
+  session: {
+    id: '',
+    status: "invalid",
+    startedAt: new Date(),
+  },
   gameVersion: '831',
   features: {
     engineerTools: {

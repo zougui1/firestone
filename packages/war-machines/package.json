@@ -1,36 +1,20 @@
 {
   "name": "@zougui/firestone.war-machines",
-  "private": true,
-  "version": "0.1.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./campaign": "./src/campaign/index.ts"
   },
-  "license": "MIT",
-  "scripts": {
-    "build": "tsc",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsup src/index.ts",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
-  },
-  "devDependencies": {
-    "@zougui/eslint-config": "workspace:*",
-    "@zougui/firestone.types": "workspace:^",
-    "@zougui/prettier-config": "workspace:*",
-    "@zougui/tsconfig": "workspace:*",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "tsup": "^8.5.0",
-    "typescript": "catalog:"
-  },
-  "prettier": "@zougui/prettier-config",
+  "scripts": {},
   "dependencies": {
-    "@zougui/firestone.error": "workspace:^",
+    "@zougui/firestone.error": "workspace:*",
     "munkres-js": "^1.2.2",
     "neverthrow": "^8.2.0",
     "radash": "^12.1.1"
+  },
+  "devDependencies": {
+    "@zougui/firestone.config": "workspace:*",
+    "@zougui/firestone.types": "workspace:*",
+    "typescript": "catalog:"
   }
 }

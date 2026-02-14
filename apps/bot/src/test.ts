@@ -2,9 +2,9 @@ import WebSocket from 'ws';
 
 import { env } from './env';
 
-let battleAttempts = 0;
+//let battleAttempts = 0;
 
-const maxBattleAttempts = 100000;
+//const maxBattleAttempts = 100000;
 const userId = env.firestone.userId;
 const serverName = env.firestone.server;
 const uri = env.firestone.socket.uri;
@@ -57,9 +57,9 @@ const sendRequest = async (request: FirestoneRequest) => {
 
 const socket = new WebSocket(uri);
 
-const sleep = (ms: number) => {
+/*const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
+}*/
 
 const ensureConnection = async () => {
   if (socket.readyState !== socket.CONNECTING) {

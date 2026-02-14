@@ -1,113 +1,152 @@
 export const heroBaseData = {
   talia: {
-    name: 'talia',
+    name: "talia",
+    specialization: "damage",
   },
   burt: {
-    name: 'burt',
+    name: "burt",
+    specialization: "damage",
   },
   solaine: {
-    name: 'solaine',
+    name: "solaine",
+    specialization: "damage",
   },
   boris: {
-    name: 'boris',
+    name: "boris",
+    specialization: "tank",
   },
   benedictus: {
-    name: 'benedictus',
+    name: "benedictus",
+    specialization: "healer",
   },
   leo: {
-    name: 'leo',
+    name: "leo",
+    specialization: "tank",
   },
   muriel: {
-    name: 'muriel',
+    name: "muriel",
+    specialization: "damage",
   },
   blaze: {
-    name: 'blaze',
+    name: "blaze",
+    specialization: "damage",
   },
   luana: {
-    name: 'luana',
+    name: "luana",
+    specialization: "healer",
   },
   valerius: {
-    name: 'valerius',
+    name: "valerius",
+    specialization: "tank",
   },
   astrid: {
-    name: 'astrid',
+    name: "astrid",
+    specialization: "damage",
   },
   ina: {
-    name: 'ina',
+    name: "ina",
+    specialization: "damage",
   },
   fini: {
-    name: 'fini',
+    name: "fini",
+    specialization: "damage",
   },
   asmondai: {
-    name: 'asmondai',
+    name: "asmondai",
+    specialization: "tank",
   },
   danysa: {
-    name: 'danysa',
+    name: "danysa",
+    specialization: "tank",
   },
   iseris: {
-    name: 'iseris',
+    name: "iseris",
+    specialization: "damage",
   },
   belien: {
-    name: 'belien',
+    name: "belien",
+    specialization: "healer",
   },
   sely: {
-    name: 'sely',
+    name: "sely",
+    specialization: "damage",
   },
   randal: {
-    name: 'randal',
+    name: "randal",
+    specialization: "tank",
   },
   molly: {
-    name: 'molly',
+    name: "molly",
+    specialization: "damage",
   },
   layla: {
-    name: 'layla',
+    name: "layla",
+    specialization: "healer",
   },
   joe: {
-    name: 'joe',
+    name: "joe",
+    specialization: "damage",
   },
   hongyu: {
-    name: 'hongyu',
+    name: "hongyu",
+    specialization: "damage",
   },
   amun: {
-    name: 'amun',
+    name: "amun",
+    specialization: "damage",
   },
   panko: {
-    name: 'panko',
+    name: "panko",
+    specialization: "tank",
   },
   yavo: {
-    name: 'yavo',
+    name: "yavo",
+    specialization: "healer",
   },
   cirilo: {
-    name: 'cirilo',
+    name: "cirilo",
+    specialization: "damage",
   },
   vilon: {
-    name: 'vilon',
+    name: "vilon",
+    specialization: "damage",
   },
   anzo: {
-    name: 'anzo',
+    name: "anzo",
+    specialization: "tank",
   },
   zelea: {
-    name: 'zelea',
+    name: "zelea",
+    specialization: "damage",
   },
   zoruk: {
-    name: 'zoruk',
+    name: "zoruk",
+    specialization: "healer",
   },
   rickie: {
-    name: 'rickie',
+    name: "rickie",
+    specialization: "damage",
   },
   jess: {
-    name: 'jess',
+    name: "jess",
+    specialization: "damage",
   },
   ledra: {
-    name: 'ledra',
+    name: "ledra",
+    specialization: "healer",
   },
   yamanoth: {
-    name: 'yamanoth',
+    name: "yamanoth",
+    specialization: "tank",
   },
   kramatak: {
-    name: 'kramatak',
+    name: "kramatak",
+    specialization: "damage",
   },
 } as const;
 
 export type HeroName = keyof typeof heroBaseData;
-export const heroNameList = Object.keys(heroBaseData) as [HeroName, ...HeroName[]];
+export const heroNameList = Object.keys(heroBaseData) as [
+  HeroName,
+  ...HeroName[],
+];

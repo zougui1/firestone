@@ -1,9 +1,26 @@
 {
-  "extends": "@zougui/tsconfig/base.json",
   "compilerOptions": {
-    "lib": ["ES2024"],
-    "outDir": "${configDir}/dist"
+    "target": "esnext",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    /* Linting */
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", "**/*.tsx"],
 }

@@ -1,72 +1,63 @@
-'use client';
+import { isNumber } from "radash";
+import type { PartialDeep } from "type-fest";
+import { CheckIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 
-import { isNumber, sort } from 'radash';
-import { toast } from 'sonner';
-import { type PartialDeep } from 'type-fest';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Check } from 'lucide-react';
+import {
+  Card,
+  Field,
+  NumberField,
+  Select,
+  Separator,
+  Spinner,
+  Switch,
+  Typography,
+} from "~/ui/components/primitives";
+import { ToastButton } from "~/ui/components/standard";
+import { BotFeatureCard } from "~/features/bot/components";
+import { useBotConfig, useUpdateBotConfig } from "~/features/bot/hooks";
 
-import { type db } from '@zougui/firestone.db';
-import { type Guardian } from '@zougui/firestone.types';
+import type { Guardian } from "@zougui/firestone.types";
 
-import { Button, Input, Label, Select, Switch, Typography } from '~/components/ui';
-import { Card } from '~/components/ui/Card';
-import { useTRPC } from '~/trpc/react';
+import { MissionList } from "./MissionList";
+import type { Config } from "../types";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "~/utils/trpc";
+import type { db } from "@zougui/firestone.db";
 
-import { BotFeatureConfig } from './BotFeatureConfig';
-import { useBotConfig, useUpdateBotConfig } from '../hooks';
-import { useLongPolling } from '~/hooks';
-
-const guardians: Record<Guardian, Guardian> = {
-  Vermillion: 'Vermillion',
-  Grace: 'Grace',
-  Ankaa: 'Ankaa',
-  Azhar: 'Azhar',
+const guardians: Record<Guardian | "auto", Guardian | "Auto"> = {
+  auto: "Auto",
+  Vermillion: "Vermillion",
+  Grace: "Grace",
+  Ankaa: "Ankaa",
+  Azhar: "Azhar",
 };
 
-const difficultyOrder = {
-  easy: 0,
-  normal: 1,
-  hard: 2,
-  insane: 3,
-  nightmare: 4,
-};
-
-type Config = Omit<typeof db.config.schema, '_id'> & { _id: string; };
-
-export const BotConfig = () => {
+export function BotConfig() {
   const trpc = useTRPC();
   const config = useBotConfig();
   const updateConfig = useUpdateBotConfig(config);
   const restartMutation = useMutation(trpc.bot.restart.mutationOptions());
-  const { data: lastMissions, refetch, isFetching } = useQuery(trpc.bot.findLastMissions.queryOptions());
 
-  useLongPolling(refetch, isFetching);
+  const toggleFeature =
+    (feature: keyof Config["features"]) => (enabled: boolean) => {
+      updateConfig({
+        features: {
+          [feature]: { enabled },
+        },
+      });
+    };
 
-  if (!config.data || !config.serverData) {
-    return (
-      <Typography.H1>No bot configurations found.</Typography.H1>
-    );
-  }
-
-  const toggleFeature = (feature: keyof Config['features']) => (enabled: boolean) => {
-    updateConfig({
-      features: {
-        [feature]: { enabled },
-      },
-    });
-  }
-
-  const handleNumberChange = (getData: (value: number) => Omit<PartialDeep<Config>, '_id'>) => {
-    return (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = event.currentTarget;
+  const handleNumberChange = (
+    getData: (value: number) => Omit<PartialDeep<Config>, "_id">,
+  ) => {
+    return (value: number | null) => {
       const number = Number(value);
 
       if (value && isNumber(number)) {
         updateConfig(getData(number));
       }
-    }
-  }
+    };
+  };
 
   const handleToggleAll = (enabled: boolean) => {
     updateConfig({
@@ -83,232 +74,328 @@ export const BotConfig = () => {
         pickaxesClaiming: { enabled },
       },
     });
-  }
+  };
 
-  const onRestart = async () => {
-    try {
-      await restartMutation.mutateAsync();
-      toast.success('The bot has been restarted');
-    } catch {
-      toast.success('Failed to restart the bot');
-    }
+  const renderSessionStatus = () => {
+    if (!config.data) return;
+
+    const icons = {
+      idle: <Spinner className="ml-2 size-5 mb-1" />,
+      valid: <CheckIcon className="text-success ml-2" />,
+      invalid: <XIcon className="text-destructive ml-2 size-6" />,
+    } satisfies Record<typeof db.config.schema.session.status, React.ReactNode>;
+
+    return icons[config.data.session.status];
+  };
+
+  if (!config.data || !config.serverData) {
+    return <Typography.H1>No bot configurations found.</Typography.H1>;
   }
 
   return (
-    <div className="flex flex-col gap-4 divide-y-[1px] divide-slate-500">
-      <div className="flex justify-center pb-4">
-        <Card.Root className="max-w-lg">
-          <Card.Header className="flex flex-col sm:flex-row sm:items-center gap-2">
+    <div className="flex flex-col items-center gap-4 w-full">
+      <Card.Root className="max-w-md w-full">
+        <Card.Header className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
             <Switch
-              checked={
-                config.data.features.alchemyExperiment.enabled ||
-                config.data.features.campaignLoot.enabled ||
-                config.data.features.campaignMission.enabled ||
-                config.data.features.engineerTools.enabled ||
-                config.data.features.firestoneResearch.enabled ||
-                config.data.features.guardianTraining.enabled ||
-                config.data.features.guildExpedition.enabled ||
-                config.data.features.mapMission.enabled ||
-                config.data.features.oracleRitual.enabled ||
-                config.data.features.pickaxesClaiming.enabled
-              }
+              color="success"
+              checked={Object.values(config.data.features).some(
+                (feature) => feature.enabled,
+              )}
               onCheckedChange={handleToggleAll}
-              className="cursor-pointer data-[state=checked]:bg-success"
             />
-            <Typography.H4 className="w-full flex justify-between items-center">
-              <span>Bot</span>
-
-              <Button
-                onClick={onRestart}
-                loading={restartMutation.isPending}
-              >
-                Restart
-              </Button>
-            </Typography.H4>
-          </Card.Header>
-
-          <Card.Content className="flex flex-wrap gap-4">
-            <Label className="w-2/5 inline-flex flex-col items-start">
-              Session ID
-              <Input
-                defaultValue={config.data.sessionId}
-                onChange={e => updateConfig({ sessionId: e.currentTarget.value })}
-              />
-            </Label>
-
-            <Label className="w-2/5 inline-flex flex-col items-start">
-              Game Version
-              <Input
-                defaultValue={config.data.gameVersion}
-                onChange={e => updateConfig({ gameVersion: e.currentTarget.value })}
-              />
-            </Label>
-          </Card.Content>
-        </Card.Root>
-      </div>
-
-      <div className="w-full flex flex-wrap justify-center gap-4">
-        <BotFeatureConfig
-          label="Campaign Missions"
-          enabled={config.data.features.campaignMission.enabled}
-          onEnabledChange={toggleFeature('campaignMission')}
-        >
-          <Label className="inline-flex flex-col items-start">
-            Battle Cooldown (seconds)
-            <Input
-              defaultValue={config.data.features.campaignMission.battleCooldownSeconds}
-              onChange={handleNumberChange(value => ({ features: { campaignMission: { battleCooldownSeconds: value } } }))}
-            />
-          </Label>
-
-          <div>
-            {sort(lastMissions ?? [], m => difficultyOrder[m.difficulty]).map(mission => (
-              <div key={mission.difficulty} className="flex gap-1.5">
-                <span className="capitalize">
-                  {mission.difficulty} {mission.level}: {mission.attempts}
-                </span>
-
-                {mission.wonAt && <Check className="text-green-500" />}
-              </div>
-            ))}
+            <Card.Title>Bot</Card.Title>
           </div>
-        </BotFeatureConfig>
 
-        <BotFeatureConfig
+          <ToastButton
+            variant="primary"
+            onClick={async (e, toastManager) => {
+              try {
+                await restartMutation.mutateAsync();
+
+                toastManager.success({
+                  description: "The bot has been restarted",
+                  timeout: 3000,
+                });
+              } catch {
+                toastManager.error({
+                  description: "Failed to restart the bot",
+                  timeout: 3000,
+                });
+              }
+            }}
+            loading={restartMutation.isPending}
+          >
+            Restart
+          </ToastButton>
+        </Card.Header>
+
+        <Card.Content className="flex gap-4 items-end">
+          <Field.Root className="flex-1">
+            <Field.Label className="flex items-center">
+              Session ID {renderSessionStatus()}
+            </Field.Label>
+            <Field.Control
+              defaultValue={config.data.session.id}
+              onChange={(e) =>
+                updateConfig({ session: { id: e.currentTarget.value } })
+              }
+            />
+          </Field.Root>
+
+          <Field.Root className="flex-1">
+            <Field.Label>Game Version</Field.Label>
+            <Field.Control
+              defaultValue={config.data.gameVersion}
+              onChange={(e) =>
+                updateConfig({ gameVersion: e.currentTarget.value })
+              }
+            />
+          </Field.Root>
+        </Card.Content>
+      </Card.Root>
+
+      <Separator />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full md:w-10/12 gap-4">
+        <BotFeatureCard
+          label="Campaign Missions"
+          enabled={config.data?.features.campaignMission.enabled}
+          onEnabledChange={toggleFeature("campaignMission")}
+        >
+          <Field.Root>
+            <Field.Label>Battle Cooldown (seconds)</Field.Label>
+            <Field.Control
+              render={
+                <NumberField.Root
+                  min={1}
+                  defaultValue={
+                    config.data.features.campaignMission.battleCooldownSeconds
+                  }
+                  onValueChange={handleNumberChange((value) => ({
+                    features: {
+                      campaignMission: { battleCooldownSeconds: value },
+                    },
+                  }))}
+                >
+                  <NumberField.Input />
+                </NumberField.Root>
+              }
+            />
+          </Field.Root>
+
+          <MissionList />
+        </BotFeatureCard>
+
+        <BotFeatureCard
           label="Alchemy Experiments"
-          enabled={config.data.features.alchemyExperiment.enabled}
-          onEnabledChange={toggleFeature('alchemyExperiment')}
+          enabled={config.data?.features.alchemyExperiment.enabled}
+          onEnabledChange={toggleFeature("alchemyExperiment")}
           className="flex-col"
         >
           <div className="flex flex-wrap items-end gap-2">
-            <Label className="md:w-2/5 inline-flex flex-col items-start">
-              Tree Level
-              <Input
-                defaultValue={config.data.features.alchemyExperiment.treeLevel}
-                onChange={handleNumberChange(treeLevel => ({ features: { alchemyExperiment: { treeLevel } } }))}
+            <Field.Root>
+              <Field.Label>Tree Level</Field.Label>
+              <Field.Control
+                render={
+                  <NumberField.Root
+                    min={1}
+                    defaultValue={
+                      config.data.features.alchemyExperiment.treeLevel
+                    }
+                    onValueChange={handleNumberChange((treeLevel) => ({
+                      features: { alchemyExperiment: { treeLevel } },
+                    }))}
+                  >
+                    <NumberField.Input />
+                  </NumberField.Root>
+                }
               />
-            </Label>
+            </Field.Root>
 
-            <Label className="md:w-2/5 inline-flex flex-col items-start">
-              Duration (minutes)
-              <Input
-                defaultValue={config.data.features.alchemyExperiment.durationMinutes}
-                onChange={handleNumberChange(durationMinutes => ({ features: { alchemyExperiment: { durationMinutes } } }))}
+            <Field.Root>
+              <Field.Label>Duration (67 minutes)</Field.Label>
+              <Field.Control
+                render={
+                  <NumberField.Root
+                    min={1}
+                    defaultValue={
+                      config.data.features.alchemyExperiment.durationMinutes
+                    }
+                    onValueChange={handleNumberChange((durationMinutes) => ({
+                      features: { alchemyExperiment: { durationMinutes } },
+                    }))}
+                  >
+                    <NumberField.Input />
+                  </NumberField.Root>
+                }
               />
-            </Label>
+            </Field.Root>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Label>
-              <Switch
-                checked={config.data.features.alchemyExperiment.blood}
-                onCheckedChange={blood => updateConfig({ features: { alchemyExperiment: { blood } } })}
-              />
-              Blood
-            </Label>
+            <Field.Root orientation="horizontal">
+              <Field.Label>
+                <Switch
+                  checked={config.data.features.alchemyExperiment.blood}
+                  onCheckedChange={(blood) =>
+                    updateConfig({
+                      features: { alchemyExperiment: { blood } },
+                    })
+                  }
+                />
+                Blood
+              </Field.Label>
+            </Field.Root>
 
-            <Label>
-              <Switch
-                checked={config.data.features.alchemyExperiment.dust}
-                onCheckedChange={dust => updateConfig({ features: { alchemyExperiment: { dust } } })}
-              />
-              Dust
-            </Label>
+            <Field.Root orientation="horizontal">
+              <Field.Label>
+                <Switch
+                  checked={config.data.features.alchemyExperiment.dust}
+                  onCheckedChange={(dust) =>
+                    updateConfig({
+                      features: { alchemyExperiment: { dust } },
+                    })
+                  }
+                />
+                Dust
+              </Field.Label>
+            </Field.Root>
 
-            <Label>
-              <Switch
-                checked={config.data.features.alchemyExperiment.exoticCoins}
-                onCheckedChange={exoticCoins => updateConfig({ features: { alchemyExperiment: { exoticCoins } } })}
-              />
-              Exotic Coins
-            </Label>
+            <Field.Root orientation="horizontal">
+              <Field.Label>
+                <Switch
+                  checked={config.data.features.alchemyExperiment.exoticCoins}
+                  onCheckedChange={(exoticCoins) =>
+                    updateConfig({
+                      features: { alchemyExperiment: { exoticCoins } },
+                    })
+                  }
+                />
+                Exotic Coins
+              </Field.Label>
+            </Field.Root>
           </div>
-        </BotFeatureConfig>
+        </BotFeatureCard>
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Firestone Research"
-          enabled={config.data.features.firestoneResearch.enabled}
-          onEnabledChange={toggleFeature('firestoneResearch')}
+          enabled={config.data?.features.firestoneResearch.enabled}
+          onEnabledChange={toggleFeature("firestoneResearch")}
         >
-          <Label className="inline-flex flex-col items-start">
-            Tree Level
-            <Input
-              defaultValue={config.data.features.firestoneResearch.treeLevel}
-              onChange={handleNumberChange(treeLevel => ({ features: { firestoneResearch: { treeLevel } } }))}
+          <Field.Root>
+            <Field.Label>Tree Level</Field.Label>
+            <Field.Control
+              render={
+                <NumberField.Root
+                  min={1}
+                  defaultValue={
+                    config.data.features.firestoneResearch.treeLevel
+                  }
+                  onValueChange={handleNumberChange((treeLevel) => ({
+                    features: { firestoneResearch: { treeLevel } },
+                  }))}
+                >
+                  <NumberField.Input />
+                </NumberField.Root>
+              }
             />
-          </Label>
-        </BotFeatureConfig>
+          </Field.Root>
+        </BotFeatureCard>
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Guardian Training"
-          enabled={config.data.features.guardianTraining.enabled}
-          onEnabledChange={toggleFeature('guardianTraining')}
-          className="items-end"
+          enabled={config.data?.features.guardianTraining.enabled}
+          onEnabledChange={toggleFeature("guardianTraining")}
         >
-          <Label className="inline-flex flex-col items-start">
-            Guardian
+          <Field.Root>
+            <Field.Label nativeLabel={false} render={<div />}>
+              Guardian
+            </Field.Label>
 
             <Select.Root
+              items={guardians}
               value={config.data.features.guardianTraining.guardian}
-              onValueChange={(guardian: Guardian | 'auto') => updateConfig({ features: { guardianTraining: { guardian } } })}
+              onValueChange={(guardian: Guardian | "auto" | null) => {
+                if (!guardian) return;
+
+                updateConfig({
+                  features: { guardianTraining: { guardian: guardian } },
+                });
+              }}
             >
               <Select.Trigger>
                 <Select.Value />
               </Select.Trigger>
 
               <Select.Content>
-                <Select.Item value="auto">Auto</Select.Item>
-                <Select.Item value={guardians.Vermillion}>{guardians.Vermillion}</Select.Item>
-                <Select.Item value={guardians.Grace}>{guardians.Grace}</Select.Item>
-                <Select.Item value={guardians.Ankaa}>{guardians.Ankaa}</Select.Item>
-                <Select.Item value={guardians.Azhar}>{guardians.Azhar}</Select.Item>
+                {Object.entries(guardians).map(([value, name]) => (
+                  <Select.Item key={value} value={value}>
+                    {name}
+                  </Select.Item>
+                ))}
               </Select.Content>
             </Select.Root>
-          </Label>
+          </Field.Root>
 
-          <Label className="md:w-2/5 inline-flex flex-col items-start">
-            Cooldown (hours)
-            <Input
-              defaultValue={config.data.features.guardianTraining.cooldownSeconds / 60 / 60}
-              onChange={handleNumberChange(value => ({ features: { guardianTraining: { cooldownSeconds: value * 60 * 60 } } }))}
+          <Field.Root>
+            <Field.Label>Cooldown (hours)</Field.Label>
+            <Field.Control
+              render={
+                <NumberField.Root
+                  min={1}
+                  defaultValue={
+                    config.data.features.guardianTraining.cooldownSeconds /
+                    60 /
+                    60
+                  }
+                  onValueChange={handleNumberChange((value) => ({
+                    features: {
+                      guardianTraining: { cooldownSeconds: value * 60 * 60 },
+                    },
+                  }))}
+                >
+                  <NumberField.Input />
+                </NumberField.Root>
+              }
             />
-          </Label>
-        </BotFeatureConfig>
+          </Field.Root>
+        </BotFeatureCard>
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Engineer Tools"
-          enabled={config.data.features.engineerTools.enabled}
-          onEnabledChange={toggleFeature('engineerTools')}
+          enabled={config.data?.features.engineerTools.enabled}
+          onEnabledChange={toggleFeature("engineerTools")}
         />
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Campaign Loot"
-          enabled={config.data.features.campaignLoot.enabled}
-          onEnabledChange={toggleFeature('campaignLoot')}
+          enabled={config.data?.features.campaignLoot.enabled}
+          onEnabledChange={toggleFeature("campaignLoot")}
         />
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Guild Expeditions"
-          enabled={config.data.features.guildExpedition.enabled}
-          onEnabledChange={toggleFeature('guildExpedition')}
+          enabled={config.data?.features.guildExpedition.enabled}
+          onEnabledChange={toggleFeature("guildExpedition")}
         />
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Oracle Rituals"
-          enabled={config.data.features.oracleRitual.enabled}
-          onEnabledChange={toggleFeature('oracleRitual')}
+          enabled={config.data?.features.oracleRitual.enabled}
+          onEnabledChange={toggleFeature("oracleRitual")}
         />
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Pickaxes"
-          enabled={config.data.features.pickaxesClaiming.enabled}
-          onEnabledChange={toggleFeature('pickaxesClaiming')}
+          enabled={config.data?.features.pickaxesClaiming.enabled}
+          onEnabledChange={toggleFeature("pickaxesClaiming")}
         />
 
-        <BotFeatureConfig
+        <BotFeatureCard
           label="Map Missions"
-          enabled={config.data.features.mapMission.enabled}
-          onEnabledChange={toggleFeature('mapMission')}
+          enabled={config.data?.features.mapMission.enabled}
+          onEnabledChange={toggleFeature("mapMission")}
         />
       </div>
     </div>

@@ -1,6 +1,9 @@
-import { botRouter } from '~/features/bot/bot.router';
+import { botRouter } from "~/features/bot/bot.router";
+import { warMachineRouter } from "~/features/campaign/warMachine.router";
+import { heroRouter } from "~/features/heroes/hero.router";
+import { artifactRouter } from "~/features/artifacts/artifact.router";
 
-import { createCallerFactory, createTRPCRouter } from './trpc';
+import { createCallerFactory, createTRPCRouter } from "./trpc";
 
 /**
  * This is the primary router for your server.
@@ -9,6 +12,9 @@ import { createCallerFactory, createTRPCRouter } from './trpc';
  */
 export const appRouter = createTRPCRouter({
   bot: botRouter,
+  warMachine: warMachineRouter,
+  hero: heroRouter,
+  artifact: artifactRouter,
 });
 
 // export type definition of API

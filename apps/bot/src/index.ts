@@ -1,1 +1,3 @@
-import './program';
+import { program } from './program';
+
+program();

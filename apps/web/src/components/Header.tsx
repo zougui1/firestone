@@ -1,16 +1,18 @@
-import Link from 'next/link';
-import { Button } from './ui';
+import { Link } from "@tanstack/react-router";
+import { Separator } from "~/ui";
 
-export const Header = () => {
+export function Header() {
   return (
-    <header className="sticky top-0 left-0 flex items-center px-4 container mx-auto bg-black h-[var(--header-height)] shadow-md">
-      <Link href="/">
-        <Button variant="ghost">Bot</Button>
-      </Link>
+    <header>
+      <div className="flex flex-row items-center justify-between px-2 py-1">
+        <nav className="flex gap-4 text-lg container mx-auto">
+          <Link to="/">Bot</Link>
+          <Link to="/campaign">Campaign</Link>
+        </nav>
+        <div className="flex items-center gap-2"></div>
+      </div>
 
-      <Link href="/campaign-calculator">
-        <Button variant="ghost">Campaign Calculator</Button>
-      </Link>
+      <Separator />
     </header>
   );
 }

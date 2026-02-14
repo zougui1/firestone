@@ -1,38 +1,52 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { type PartialDeep } from 'type-fest';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { PartialDeep } from "type-fest";
 
-import { type db } from '@zougui/firestone.db';
+import type { db } from "@zougui/firestone.db";
 
-import { useTRPC } from '~/trpc/react';
+import { useTRPC } from "~/utils/trpc";
 
-import { type useBotConfig } from './useBotConfig';
+import { type useBotConfig } from "./useBotConfig";
 
-type Config = Omit<typeof db.config.schema, '_id'> & { _id: string; };
+type Config = Omit<typeof db.config.schema, "_id"> & { _id: string };
 
 export const useUpdateBotConfig = (config: ReturnType<typeof useBotConfig>) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const updateConfigMutation = useMutation(trpc.bot.updatePartial.mutationOptions({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(trpc.bot.findConfig.pathFilter());
-    }
-  }));
-  const updateConfig = (data: Omit<PartialDeep<Config>, '_id'>) => {
+  const updateConfigMutation = useMutation(
+    trpc.bot.updatePartial.mutationOptions({
+      onSuccess: () => {
+        setTimeout(() => {
+          queryClient.invalidateQueries(trpc.bot.findConfig.pathFilter());
+        }, 3000);
+      },
+    }),
+  );
+  const updateConfig = (data: Omit<PartialDeep<Config>, "_id">) => {
     const serverConfig = config.serverData;
 
     if (!serverConfig) {
       return;
     }
 
-    config.setOptimisticData(prevConfig => {
+    config.setOptimisticData((prevConfig) => {
       const conf = prevConfig ?? serverConfig;
+
+      const newSession = {
+        ...serverConfig.session,
+        ...data.session,
+      };
+
+      if (data.session?.id) {
+        newSession.status = "idle";
+      }
 
       return {
         ...conf,
         ...data,
+        session: newSession,
         features: {
           alchemyExperiment: {
             ...serverConfig.features.alchemyExperiment,
@@ -82,7 +96,7 @@ export const useUpdateBotConfig = (config: ReturnType<typeof useBotConfig>) => {
       _id: serverConfig._id,
       data,
     });
-  }
+  };
 
   return updateConfig;
-}
+};

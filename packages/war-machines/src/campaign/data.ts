@@ -1,8 +1,14 @@
-import type { CampaignDifficulty } from '@zougui/firestone.types';
+import type { CampaignDifficulty } from "@zougui/firestone.types";
 
 export const defaultTotalSimulations = 10_000;
 export const maxCampaignMissions = 90;
-export const difficulties: CampaignDifficulty[] = ['easy', 'normal', 'hard', 'insane', 'nightmare'];
+export const difficulties: CampaignDifficulty[] = [
+  "easy",
+  "normal",
+  "hard",
+  "insane",
+  "nightmare",
+];
 
 export const difficultyMultipliers: Record<CampaignDifficulty, number> = {
   easy: 1,

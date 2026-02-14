@@ -1,12 +1,17 @@
-import { schema, types } from 'papr';
+import { schema, types } from "papr";
 
-import { papr } from '../client';
+import { papr } from "../client";
 
-export const firestoneLibrary = papr.model('firestoneLibraries', schema({
-  treeLevel: types.number({ required: true }),
-  upgrades: types.objectGeneric(
-    types.object({ level: types.number({ required: true }) }),
-    undefined,
-    { required: true }
-  ),
-}));
+export const firestoneLibrary = papr.model(
+  "firestoneLibraries",
+  schema({
+    treeLevel: types.number({ required: true }),
+    upgrades: types.objectGeneric(
+      types.object({ level: types.number({ required: true }) }),
+      undefined,
+      { required: true },
+    ),
+  }),
+);
+
+export type FirestoneLibrary = (typeof firestoneLibrary)["schema"];
