@@ -9,7 +9,7 @@
     "dev": "pnpm with-env vite dev",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --",
-    "start": "pnpm with-env pnpx srvx --prod -s ../client dist/server/server.js"
+    "start": "pnpx srvx --prod -s ../client dist/server/server.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
