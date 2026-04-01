@@ -81,10 +81,18 @@ const HeroCard = ({ hero }: HeroCardProps) => {
       });
     };
 
+  const jewelMap = new Map(tempData?.jewels?.map((j) => [j.name, j]));
+
+  if ("jewels" in hero) {
+    for (const jewel of hero.jewels) {
+      jewelMap.set(jewel.name, jewel);
+    }
+  }
+
   const data = {
-    jewels: [],
     ...hero,
     ...tempData,
+    jewels: [...jewelMap.values()],
   } as Required<db.Hero>;
 
   const jewels: Partial<Record<JewelName, db.Jewel>> = Object.fromEntries(
