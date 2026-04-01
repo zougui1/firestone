@@ -1,25 +1,25 @@
-import { sort } from "radash";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { sort } from "radash";
+import { useEffect, useMemo, useState } from "react";
 
+import type { db } from "@zougui/firestone.db";
 import {
   heroBaseData,
   jewelBaseData,
   warMachineRarityData,
   type JewelName,
 } from "@zougui/firestone.war-machines";
-import type { db } from "@zougui/firestone.db";
 
-import { ZScrollArea } from "~/ui/components/standard";
 import { cn, Skeleton } from "~/ui";
+import { ZScrollArea } from "~/ui/components/standard";
 import { useTRPC } from "~/utils/trpc";
 
-import { JewelInput } from "./JewelInput";
 import { heroesStore } from "../heroes.store";
-import { useEffect, useMemo, useState } from "react";
+import { JewelInput } from "./JewelInput";
 
 export interface HeroCardProps {
   hero: db.Hero | { name: string };
@@ -49,6 +49,16 @@ const HeroCard = ({ hero }: HeroCardProps) => {
           return {
             ...prevData,
             jewels: prevData.jewels.map((j) => {
+              if (j.name !== jewelName) return j;
+              return { ...j, [fieldName]: value };
+            }),
+          };
+        }
+
+        if ("jewels" in hero && hero.jewels.some((j) => j.name === jewelName)) {
+          return {
+            ...prevData,
+            jewels: hero.jewels.map((j) => {
               if (j.name !== jewelName) return j;
               return { ...j, [fieldName]: value };
             }),
