@@ -81,12 +81,16 @@ const HeroCard = ({ hero }: HeroCardProps) => {
       });
     };
 
-  const jewelMap = new Map(tempData?.jewels?.map((j) => [j.name, j]));
+  const jewelMap = new Map<string, db.Jewel>();
 
   if ("jewels" in hero) {
     for (const jewel of hero.jewels) {
       jewelMap.set(jewel.name, jewel);
     }
+  }
+
+  for (const jewel of tempData?.jewels ?? []) {
+    jewelMap.set(jewel.name, jewel);
   }
 
   const data = {
