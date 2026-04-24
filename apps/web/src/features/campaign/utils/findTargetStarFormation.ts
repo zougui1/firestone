@@ -1,15 +1,15 @@
 import { max, min, sort } from "radash";
 
+import {
+  warMachineBaseData,
+  warMachineRarityData,
+} from "@zougui/firestone.war-machines";
 import type {
   ComputedWarMachine,
   DetailedCampaignResult,
   MissionResult,
   MissionSummary,
 } from "@zougui/firestone.war-machines/campaign";
-import {
-  warMachineBaseData,
-  warMachineRarityData,
-} from "@zougui/firestone.war-machines";
 import { simulateCampaignSummary } from "@zougui/firestone.war-machines/campaign";
 
 import { average } from "~/utils";
@@ -229,7 +229,7 @@ export const findTargetStarFormation = async (
     }
   }
 
-  team = team.filter((wm) => warMachinesMetadata[wm]?.isMain);
+  team = team.filter((wm) => warMachinesMetadata[wm]?.isMain).slice(0, 2);
 
   for (const warMachineName of rarityUpgrades) {
     const warMachine = currentWarMachines.find(
