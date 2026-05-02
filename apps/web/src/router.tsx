@@ -6,16 +6,16 @@ import {
 } from "@tanstack/react-query";
 import SuperJSON from "superjson";
 
-import "./index.css";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import "./index.css";
 
 import { Loader } from "./components/loader";
 import { toastManager } from "./components/Toaster";
 import { routeTree } from "./routeTree.gen";
-import { TRPCProvider } from "./utils/trpc";
 import type { AppRouter } from "./server/api/root";
+import { TRPCProvider } from "./utils/trpc";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -42,11 +42,17 @@ export const queryClient = new QueryClient({
   },
 });
 
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+
+  return process.env.APP_URL ?? "http://localhost:3004";
+};
+
 const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       transformer: SuperJSON,
-      url: "/api/trpc",
+      url: `${getBaseUrl()}/api/trpc`,
     }),
   ],
 });

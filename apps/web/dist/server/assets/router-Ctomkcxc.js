@@ -1815,11 +1815,11 @@ function RootDocument() {
     ] })
   ] });
 }
-const $$splitComponentImporter$1 = () => import("./campaign-DsNfH-2S.js");
+const $$splitComponentImporter$1 = () => import("./campaign-aI_USseE.js");
 const Route$2 = createFileRoute("/campaign")({
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./index-C6yIthI8.js");
+const $$splitComponentImporter = () => import("./index-DktH3YmQ.js");
 const Route$1 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter, "component")
 });
@@ -2402,11 +2402,15 @@ const queryClient = new QueryClient({
     }
   }
 });
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  return process.env.APP_URL ?? "http://localhost:3004";
+};
 const trpcClient = createTRPCClient({
   links: [
     httpBatchLink({
       transformer: SuperJSON,
-      url: "/api/trpc"
+      url: `${getBaseUrl()}/api/trpc`
     })
   ]
 });
