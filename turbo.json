@@ -36,6 +36,7 @@
     "DATABASE_URL",
     "DATABASE_NAME",
     "BOT_SERVICE_NAME",
-    "CORS_ORIGIN"
+    "CORS_ORIGIN",
+    "APP_URL"
   ]
 }

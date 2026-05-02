@@ -1,6 +1,6 @@
 import { jsx } from "react/jsx-runtime";
 import { NumberField } from "@base-ui/react";
-import { c as cn } from "./router-6tBd5Pa3.js";
+import { c as cn } from "./router-Bx6zLbHC.js";
 const NumberFieldRoot = ({
   className,
   ...props
